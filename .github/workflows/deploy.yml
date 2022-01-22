@@ -1,0 +1,79 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+  push:
+
+env:
+  # Assign commit authorship to official Github Actions bot when pushing to the `web-deploy` branch:
+  GIT_USER: "github-actions[bot]"
+  GIT_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
+
+jobs:
+  web-deploy:
+    name: web-deploy
+    runs-on: ubuntu-latest
+    env:
+      RUST_BACKTRACE: 1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Install tailwindcss
+        run: |
+          npm install -g tailwindcss
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v1
+        with:
+          cache-on-failure: true
+
+      - name: Configure git user and email
+        run: |
+          git config --global user.name ${GIT_USER}
+          git config --global user.email ${GIT_EMAIL}
+          echo Name: $(git config --get user.name)
+          echo Email: $(git config --get user.email)
+
+      - name: Install trunk and wasm-bindgen-cli
+        run: |
+          cargo install trunk --version ~0.14 --locked
+          cargo install wasm-bindgen-cli --version ~0.2 --locked
+
+      - name: Build
+        run: |
+          cd "./packages/brainduck-web"
+          trunk build --release
+          cd ../../
+
+      - name: Push to web-deploy branch
+        run: |
+          git checkout --orphan web-deploy
+          git reset
+          git add dist
+          git commit -m "deploying opal"
+          git push --set-upstream origin web-deploy -f
+
+      - name: Deploy on CFP
+        run: |
+          curl -X POST ${{ secrets.OPAL_WEB_HOOK }}
