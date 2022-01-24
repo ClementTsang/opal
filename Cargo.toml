@@ -5,7 +5,12 @@ edition = "2021"
 
 [dependencies]
 yew = "0.19"
-web-sys = { version = "0.3", features = ["MediaQueryList", "Window", "HtmlTextAreaElement"] }
+web-sys = { version = "0.3", features = [
+    "MediaQueryList",
+    "Window",
+    "HtmlTextAreaElement",
+    "EventTarget",
+] }
 console_log = { version = "0.2", optional = true }
 log = { version = "0.4", optional = true }
 

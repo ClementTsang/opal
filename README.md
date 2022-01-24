@@ -1,7 +1,7 @@
 # opal
 
-opal is a simple webapp to look up the IPA phonetics of English words, or look up English words from the IPA phonetics.
-Written in Yew and styled with Tailwind.
+opal is a simple, static webapp to look up the IPA phonetics of English words, or look up English words from
+some IPA phonetics. Written in Yew and styled with Tailwind.
 
 Support for other languages may be added in the future.
 

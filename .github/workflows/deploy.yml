@@ -34,7 +34,7 @@ jobs:
 
       - name: Install tailwindcss
         run: |
-          npm install -g tailwindcss
+          npm install -g tailwindcss@3.0.16
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
