@@ -62,14 +62,13 @@ jobs:
 
       - name: Build
         run: |
-          cd "./packages/brainduck-web"
           trunk build --release
-          cd ../../
 
       - name: Push to web-deploy branch
         run: |
           git checkout --orphan web-deploy
           git reset
+          rm .gitignore
           git add dist
           git commit -m "deploying opal"
           git push --set-upstream origin web-deploy -f
