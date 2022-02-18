@@ -1,11 +1,12 @@
 use crate::components::*;
-use web_sys::{HtmlInputElement, KeyboardEvent};
+use web_sys::{HtmlInputElement, KeyboardEvent, MouseEvent};
 use yew::{classes, function_component, functional::*, html, Callback, NodeRef, Properties};
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct SearchBarProps {
     pub text_ref: NodeRef,
     pub on_search: Callback<()>,
+    pub placeholder: &'static str,
 }
 
 #[function_component(SearchBar)]
@@ -13,26 +14,38 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     let search_bar_classes = classes!(
         "bg-white",
         "flex",
-        "w-1/4",
+        "lg:w-1/3",
+        "md:w-1/2",
+        "w-2/3",
         "rounded-md",
-        "pl-4",
-        "overflow-hidden"
+        "overflow-hidden",
+        "min-w-0",
     );
-    let input_classes = classes!("font-mono", "text-lg", "h-14", "focus:outline-none", "grow");
+    let input_classes = classes!(
+        "pl-4",
+        "bg-white",
+        "font-mono",
+        "text-lg",
+        "h-12",
+        "focus:outline-none",
+        "flex-1",
+        "min-w-0",
+    );
     let button_classes = classes!(
+        "flex-none",
         "flex",
         "items-center",
         "justify-center",
         "px-4",
         "bg-white",
         "hover:bg-sky-600",
-        "hover:text-white"
+        "hover:text-white",
     );
     let icon_classes = classes!("w-5", "h-5", "hover:white");
 
     let onclick = {
         let on_search = props.on_search.clone();
-        move |_| {
+        move |_: MouseEvent| {
             on_search.emit(());
         }
     };
@@ -60,7 +73,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
 
     html! {
         <div class={search_bar_classes}>
-            <input class={input_classes} type="text" id="search" placeholder="opal" ref={input_ref} {onkeypress} />
+            <input class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {onkeypress} />
             <button class={button_classes} {onclick}>
                 <span class={icon_classes}>
                     <MagnifyingGlassIcon/>

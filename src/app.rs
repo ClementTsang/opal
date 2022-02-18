@@ -13,8 +13,31 @@ pub enum Msg {
 }
 
 #[derive(Clone)]
+enum SearchMode {
+    Ipa,
+    Normal,
+}
+
+impl SearchMode {
+    fn placeholder_text(&self) -> &'static str {
+        match self {
+            SearchMode::Ipa => "oʊpəl",
+            SearchMode::Normal => "opal",
+        }
+    }
+
+    fn button_text(&self) -> &str {
+        match self {
+            SearchMode::Ipa => "Use IPA",
+            SearchMode::Normal => "Use Text",
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct App {
     dark_mode: bool,
+    mode: SearchMode,
 }
 
 impl Component for App {
@@ -30,14 +53,21 @@ impl Component for App {
                     None => false,
                 })
                 .unwrap_or(false),
+            mode: SearchMode::Normal,
         }
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::Search => true,
-            Msg::Toggle => true,
+            Msg::Search => {}
+            Msg::Toggle => {
+                self.mode = match &self.mode {
+                    SearchMode::Ipa => SearchMode::Normal,
+                    SearchMode::Normal => SearchMode::Ipa,
+                };
+            }
         }
+        true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
@@ -49,6 +79,7 @@ impl Component for App {
                 "flex-col",
                 "items-center",
                 "justify-center",
+                "gap-4",
             ];
             if self.dark_mode {
                 c.push("dark");
@@ -56,13 +87,27 @@ impl Component for App {
             classes!(c)
         };
 
+        let type_classes = classes!(
+            "px-4",
+            "w-48",
+            "h-12",
+            "font-semibold",
+            "bg-white",
+            "hover:bg-sky-600",
+            "hover:text-white",
+            "rounded-md"
+        );
+
         let text_ref = NodeRef::default();
         let link = ctx.link();
         let on_search = link.callback(|_| Msg::Search);
+        let on_toggle = link.callback(|_| Msg::Toggle);
+        let placeholder: &'static str = self.mode.placeholder_text();
 
         html! {
             <div class={root_classes}>
-                <SearchBar {text_ref} {on_search}/>
+                <SearchBar {text_ref} {on_search} {placeholder}/>
+                <button onclick={on_toggle} class={type_classes}>{self.mode.button_text()}</button>
             </div>
         }
     }
