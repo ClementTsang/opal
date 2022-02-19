@@ -1,5 +1,12 @@
 [watch]
-watch = ["src/", "Cargo.toml", "Cargo.lock", "index.html", "input.css"]
+watch = [
+    "src/",
+    "Cargo.toml",
+    "Cargo.lock",
+    "index.html",
+    "input.css",
+    "tailwind.config.js",
+]
 
 [[hooks]]
 stage = "pre_build"

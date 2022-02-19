@@ -37,13 +37,13 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     );
     let input_classes = classes!(
         "bg-white",
-        "font-mono",
+        "font-input",
         "md:text-lg",
         "text-base",
         "h-12",
         "focus:outline-none",
         "flex-1",
-        "pl-2",
+        "pl-1",
         "min-w-0",
     );
     let button_classes = classes!(
@@ -62,7 +62,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "rounded-full",
         "hover:bg-slate-100",
         "self-center",
-        "font-mono",
+        "font-input",
         "text-sm",
     );
     let icon_classes = classes!("w-5", "h-5");
@@ -106,7 +106,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         <div class={search_bar_classes}>
             <button title="Toggle between searching IPA and text" class={toggle_classes} onclick={toggle_onclick}>{props.toggle_text}</button>
             <input class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {onkeypress} />
-            <button class={button_classes} onclick={search_onclick}>
+            <button title="Search" class={button_classes} onclick={search_onclick}>
                 <span class={icon_classes}>
                     <MagnifyingGlassIcon/>
                 </span>

@@ -28,7 +28,7 @@ impl SearchMode {
 
     fn button_text(&self) -> &'static str {
         match self {
-            SearchMode::Ipa => "/æ/",
+            SearchMode::Ipa => "/ə/",
             SearchMode::Normal => "abc",
         }
     }
@@ -86,6 +86,7 @@ impl Component for App {
             }
             classes!(c)
         };
+        let title_classes = classes!("text-6xl", "pb-6", "font-body");
 
         let text_ref = NodeRef::default();
         let link = ctx.link();
@@ -95,6 +96,7 @@ impl Component for App {
 
         html! {
             <div class={root_classes}>
+                <p class={title_classes}>{"opal"}</p>
                 <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()}/>
             </div>
         }

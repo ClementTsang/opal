@@ -22,7 +22,7 @@ else:
             else:
                 print("Error: Failed to optimize {}".format(target))
                 sys.exit(42)
-        elif filename.endswith(".js") or filename.endswith(".html"):
+        elif filename.endswith(".js"):
             if os.system("minify {} > {}".format(target, TMP_FILE)) == 0:
                 try:
                     os.replace(TMP_FILE, target)

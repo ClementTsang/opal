@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: OpenSans;
+  src: url(./static/fonts/OpenSans-Light.ttf) format("truetype");
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: IBM Plex Mono;
+  src: url(./static/fonts/IBMPlexMono-Text.woff2) format("woff");
+  font-display: fallback;
+}
