@@ -6,9 +6,9 @@ use log::debug;
 
 use crate::components::*;
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum Msg {
-    Search,
+    Search(String),
     Toggle,
 }
 
@@ -59,7 +59,7 @@ impl Component for App {
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::Search => {}
+            Msg::Search(text) => {}
             Msg::Toggle => {
                 self.mode = match &self.mode {
                     SearchMode::Ipa => SearchMode::Normal,
@@ -89,7 +89,7 @@ impl Component for App {
 
         let text_ref = NodeRef::default();
         let link = ctx.link();
-        let on_search = link.callback(|_| Msg::Search);
+        let on_search = link.callback(|s: String| Msg::Search(s));
         let on_toggle = link.callback(|_| Msg::Toggle);
         let placeholder: &'static str = self.mode.placeholder_text();
 

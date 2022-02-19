@@ -5,7 +5,7 @@ use yew::{classes, function_component, functional::*, html, Callback, NodeRef, P
 #[derive(Clone, PartialEq, Properties)]
 pub struct SearchBarProps {
     pub text_ref: NodeRef,
-    pub on_search: Callback<()>,
+    pub on_search: Callback<String>,
     pub on_toggle: Callback<()>,
     pub placeholder: &'static str,
     pub toggle_text: &'static str,
@@ -68,9 +68,16 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     let icon_classes = classes!("w-5", "h-5");
 
     let search_onclick = {
+        let input_ref = input_ref.clone();
         let on_search = props.on_search.clone();
         move |_| {
-            on_search.emit(());
+            let s = input_ref
+                .cast::<HtmlInputElement>()
+                .map(|input| input.value())
+                .unwrap_or_default();
+            if !s.is_empty() {
+                on_search.emit(s);
+            }
         }
     };
     let toggle_onclick = {
@@ -80,10 +87,17 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         }
     };
     let onkeypress = {
+        let input_ref = input_ref.clone();
         let on_search = props.on_search.clone();
         move |e: KeyboardEvent| {
             if e.key() == "Enter" {
-                on_search.emit(());
+                let s = input_ref
+                    .cast::<HtmlInputElement>()
+                    .map(|input| input.value())
+                    .unwrap_or_default();
+                if !s.is_empty() {
+                    on_search.emit(s);
+                }
             }
         }
     };

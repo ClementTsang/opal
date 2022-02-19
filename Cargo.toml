@@ -13,6 +13,12 @@ web-sys = { version = "0.3", features = [
 ] }
 console_log = { version = "0.2", optional = true }
 log = { version = "0.4", optional = true }
+yew-interop = "0.3"
 
 [features]
-default = ["console_log", "log"]
+# default = ["console_log", "log"]
+default = []
+
+[profile.release]
+lto = true
+opt-level = 's'
