@@ -26,10 +26,10 @@ impl SearchMode {
         }
     }
 
-    fn button_text(&self) -> &str {
+    fn button_text(&self) -> &'static str {
         match self {
-            SearchMode::Ipa => "Use IPA",
-            SearchMode::Normal => "Use Text",
+            SearchMode::Ipa => "/æ/",
+            SearchMode::Normal => "abc",
         }
     }
 }
@@ -87,17 +87,6 @@ impl Component for App {
             classes!(c)
         };
 
-        let type_classes = classes!(
-            "px-4",
-            "w-48",
-            "h-12",
-            "font-semibold",
-            "bg-white",
-            "hover:bg-sky-600",
-            "hover:text-white",
-            "rounded-md"
-        );
-
         let text_ref = NodeRef::default();
         let link = ctx.link();
         let on_search = link.callback(|_| Msg::Search);
@@ -106,8 +95,7 @@ impl Component for App {
 
         html! {
             <div class={root_classes}>
-                <SearchBar {text_ref} {on_search} {placeholder}/>
-                <button onclick={on_toggle} class={type_classes}>{self.mode.button_text()}</button>
+                <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()}/>
             </div>
         }
     }
