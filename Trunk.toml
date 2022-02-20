@@ -4,11 +4,11 @@ watch = [
     "Cargo.toml",
     "Cargo.lock",
     "index.html",
-    "input.css",
+    "css/input.css",
     "tailwind.config.js",
 ]
 
 [[hooks]]
 stage = "pre_build"
 command = "tailwindcss"
-command_arguments = ["-i", "input.css", "-o", "./tailwind.css", "-m"]
+command_arguments = ["-i", "./css/input.css", "-o", "./css/tailwind.css", "-m"]
