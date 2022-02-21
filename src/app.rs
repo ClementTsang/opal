@@ -10,7 +10,6 @@ use log::debug;
 
 use crate::components::*;
 
-#[cfg(debug_assertions)]
 const DB_CONFIG: &str = r#"
 {
     "from": "inline",
@@ -19,22 +18,7 @@ const DB_CONFIG: &str = r#"
         "requestChunkSize": 4096,
         "databaseLengthBytes": 3502080,
         "serverChunkSize": 10485760,
-        "urlPrefix": "http://localhost:8080/static/databases/db.sqlite3.",
-        "suffixLength": 3
-    }
-}
-"#;
-
-#[cfg(not(debug_assertions))]
-const DB_CONFIG: &str = r#"
-{
-    "from": "inline",
-    "config": {
-        "serverMode": "chunked",
-        "requestChunkSize": 4096,
-        "databaseLengthBytes": 3502080,
-        "serverChunkSize": 10485760,
-        "urlPrefix": "./static/databases/db.sqlite3.",
+        "urlPrefix": "../databases/db.sqlite3.",
         "suffixLength": 3
     }
 }
@@ -85,14 +69,19 @@ async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::
 
 async fn query(mode: SearchMode, search: String) -> PromiseResult {
     let query = match mode {
-        SearchMode::Ipa => format!("SELECT word FROM english WHERE phonemes in ({})", search),
-        SearchMode::Normal => format!("SELECT phonemes FROM english WHERE word in ({})", search),
+        SearchMode::Ipa => format!("SELECT * FROM english WHERE phonemes in ({})", search),
+        SearchMode::Normal => format!("SELECT * FROM english WHERE word in ({})", search),
     };
     exec_query(query).await
 }
 
 async fn wrapped_create_db_worker(configs: Vec<JsValue>, search: String) -> String {
-    create_bundled_db_worker(configs).await;
+    create_db_worker(
+        configs,
+        "/static/code/sqlite.worker.js",
+        "/static/code/sql-wasm.wasm",
+    )
+    .await;
     search
 }
 
