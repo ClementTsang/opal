@@ -1,3 +1,7 @@
+use itertools::Itertools;
+use sql_js_httpvfs_rs::*;
+use wasm_bindgen::JsValue;
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
 #[cfg(feature = "console_log")]
@@ -6,13 +10,41 @@ use log::debug;
 
 use crate::components::*;
 
-#[derive(Clone, PartialEq, Eq)]
+#[cfg(debug_assertions)]
+const DB_CONFIG: &str = r#"
+{
+    "from": "inline",
+    "config": {
+        "serverMode": "full",
+        "requestChunkSize": 1024,
+        "url": "http://localhost:8080/static/databases/database.sqlite3"
+    }
+}
+"#;
+
+#[cfg(not(debug_assertions))]
+const DB_CONFIG: &str = r#"
+{
+    "from": "inline",
+    "config": {
+        "serverMode": "full",
+        "requestChunkSize": 1024,
+        "url": "http://opal.pages.dev/static/databases/database.sqlite3"
+    }
+}
+"#;
+
+type PromiseResult = Result<JsValue, JsValue>;
+
+#[derive(Clone)]
 pub enum Msg {
-    Search(String),
+    SearchStart(String),
+    Searching(String),
+    Results(PromiseResult),
     Toggle,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 enum SearchMode {
     Ipa,
     Normal,
@@ -34,10 +66,28 @@ impl SearchMode {
     }
 }
 
-#[derive(Clone)]
 pub struct App {
     dark_mode: bool,
     mode: SearchMode,
+    worker_created: bool,
+}
+
+// From https://github.com/yewstack/yew/issues/364#issuecomment-737138847
+async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::Output>) {
+    finished_callback.emit(f.await);
+}
+
+async fn query(mode: SearchMode, search: String) -> PromiseResult {
+    let query = match mode {
+        SearchMode::Ipa => format!("SELECT word FROM english WHERE phonemes in ({})", search),
+        SearchMode::Normal => format!("SELECT phonemes FROM english WHERE word in ({})", search),
+    };
+    exec_query(query).await
+}
+
+async fn wrapped_create_db_worker(configs: Vec<JsValue>, search: String) -> String {
+    create_bundled_db_worker(configs).await;
+    search
 }
 
 impl Component for App {
@@ -54,20 +104,52 @@ impl Component for App {
                 })
                 .unwrap_or(false),
             mode: SearchMode::Normal,
+            worker_created: false,
         }
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::Search(text) => {}
+            Msg::SearchStart(search) => {
+                if !self.worker_created {
+                    let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
+                    let x = JsValue::from_serde(&v).unwrap();
+                    spawn_local(wrap(
+                        wrapped_create_db_worker(vec![x], search),
+                        ctx.link().callback(|s| Msg::Searching(s)),
+                    ));
+                    self.worker_created = true;
+                } else {
+                    ctx.link().send_message(Msg::Searching(search));
+                }
+
+                false
+            }
+            Msg::Searching(search) => {
+                let search = search
+                    .split_ascii_whitespace()
+                    .map(|w| format!("\"{}\"", w))
+                    .join(",");
+
+                spawn_local(wrap(
+                    query(self.mode, search),
+                    ctx.link().callback(|results| Msg::Results(results)),
+                ));
+                false
+            }
+            Msg::Results(results) => {
+                // Get results
+                debug!("Results: {:?}", results);
+                true
+            }
             Msg::Toggle => {
                 self.mode = match &self.mode {
                     SearchMode::Ipa => SearchMode::Normal,
                     SearchMode::Normal => SearchMode::Ipa,
                 };
+                true
             }
         }
-        true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
@@ -90,7 +172,7 @@ impl Component for App {
 
         let text_ref = NodeRef::default();
         let link = ctx.link();
-        let on_search = link.callback(|s: String| Msg::Search(s));
+        let on_search = link.callback(|s: String| Msg::SearchStart(s));
         let on_toggle = link.callback(|_| Msg::Toggle);
         let placeholder: &'static str = self.mode.placeholder_text();
 
