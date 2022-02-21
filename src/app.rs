@@ -15,9 +15,12 @@ const DB_CONFIG: &str = r#"
 {
     "from": "inline",
     "config": {
-        "serverMode": "full",
-        "requestChunkSize": 1024,
-        "url": "http://localhost:8080/static/databases/database.sqlite3"
+        "serverMode": "chunked",
+        "requestChunkSize": 4096,
+        "databaseLengthBytes": 3502080,
+        "serverChunkSize": 10485760,
+        "urlPrefix": "http://localhost:8080/static/databases/db.sqlite3.",
+        "suffixLength": 3
     }
 }
 "#;
@@ -27,9 +30,12 @@ const DB_CONFIG: &str = r#"
 {
     "from": "inline",
     "config": {
-        "serverMode": "full",
-        "requestChunkSize": 1024,
-        "url": "http://opal.pages.dev/static/databases/database.sqlite3"
+        "serverMode": "chunked",
+        "requestChunkSize": 4096,
+        "databaseLengthBytes": 3502080,
+        "serverChunkSize": 10485760,
+        "urlPrefix": "./static/databases/db.sqlite3.",
+        "suffixLength": 3
     }
 }
 "#;
@@ -118,14 +124,14 @@ impl Component for App {
                         wrapped_create_db_worker(vec![x], search),
                         ctx.link().callback(|s| Msg::Searching(s)),
                     ));
-                    self.worker_created = true;
                 } else {
                     ctx.link().send_message(Msg::Searching(search));
                 }
 
-                false
+                true
             }
             Msg::Searching(search) => {
+                self.worker_created = true;
                 let search = search
                     .split_ascii_whitespace()
                     .map(|w| format!("\"{}\"", w))
@@ -135,7 +141,7 @@ impl Component for App {
                     query(self.mode, search),
                     ctx.link().callback(|results| Msg::Results(results)),
                 ));
-                false
+                true
             }
             Msg::Results(results) => {
                 // Get results

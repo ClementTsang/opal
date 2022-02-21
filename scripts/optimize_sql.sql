@@ -1,3 +1,3 @@
 pragma journal_mode = delete;
-pragma page_size = 1024;
+pragma page_size = 4096;
 vacuum;
