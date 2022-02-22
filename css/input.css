@@ -9,7 +9,7 @@
 }
 
 @font-face {
-  font-family: IBM Plex Mono;
-  src: url(./static/fonts/IBMPlexMono-Text.woff2) format("woff");
+  font-family: Source Code Pro;
+  src: url(./static/fonts/SourceCodePro-Medium.otf.woff2) format("woff");
   font-display: fallback;
 }
