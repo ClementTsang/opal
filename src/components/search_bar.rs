@@ -108,7 +108,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     html! {
         <div class={search_bar_classes}>
             <button title="Toggle between searching IPA and text" class={toggle_classes} onclick={toggle_onclick}>{props.toggle_text}</button>
-            <input class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {onkeypress} />
+            <input title="Search query" class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {onkeypress} />
             <button title="Search" class={button_classes} onclick={search_onclick}>
                 <span class={icon_classes}>
                     <MagnifyingGlassIcon/>

@@ -81,15 +81,15 @@ async fn query(mode: SearchMode, search: String) -> PromiseResult {
     exec_query(query).await
 }
 
-// async fn wrapped_create_db_worker(configs: Vec<JsValue>, search: String) -> String {
-//     create_db_worker(
-//         configs,
-//         "/static/code/sqlite.worker.js",
-//         "/static/code/sql-wasm.wasm",
-//     )
-//     .await;
-//     search
-// }
+async fn wrapped_create_db_worker(configs: Vec<JsValue>, search: String) -> String {
+    create_db_worker(
+        configs,
+        "/static/code/sqlite.worker.js",
+        "/static/code/sql-wasm.wasm",
+    )
+    .await;
+    search
+}
 
 impl Component for App {
     type Message = Msg;
