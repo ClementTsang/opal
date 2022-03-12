@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use sql_js_httpvfs_rs::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
@@ -14,12 +13,9 @@ const DB_CONFIG: &str = r#"
 {
     "from": "inline",
     "config": {
-        "serverMode": "chunked",
-        "requestChunkSize": 4096,
-        "databaseLengthBytes": 3502080,
-        "serverChunkSize": 10485760,
-        "urlPrefix": "../databases/db.sqlite3.",
-        "suffixLength": 3
+        "serverMode": "full",
+        "requestChunkSize": 1024,
+        "url": "../databases/db.sqlite3"
     }
 }
 "#;
@@ -30,7 +26,7 @@ type PromiseResult = Result<JsValue, JsValue>;
 pub enum Msg {
     SearchStart(String),
     Searching(String),
-    Results(PromiseResult),
+    Results(Vec<PromiseResult>),
     Toggle,
 }
 
@@ -67,28 +63,17 @@ async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::
     finished_callback.emit(f.await);
 }
 
-async fn query(mode: SearchMode, search: String) -> PromiseResult {
-    let query = match mode {
-        SearchMode::Ipa => format!(
-            "SELECT * FROM english WHERE phonemes in ({}) ORDER BY phonemes ASC",
-            search
-        ),
-        SearchMode::Normal => format!(
-            "SELECT * FROM english WHERE word in ({}) ORDER BY word ASC",
-            search
-        ),
-    };
-    exec_query(query).await
-}
-
-async fn wrapped_create_db_worker(configs: Vec<JsValue>, search: String) -> String {
-    create_db_worker(
-        configs,
-        "/static/code/sqlite.worker.js",
-        "/static/code/sql-wasm.wasm",
-    )
-    .await;
-    search
+async fn query(mode: SearchMode, search: String) -> Vec<PromiseResult> {
+    let splits = search.split_ascii_whitespace();
+    let mut result = Vec::with_capacity(splits.size_hint().1.unwrap_or(0));
+    for s in splits {
+        let query = match mode {
+            SearchMode::Ipa => format!("SELECT * FROM english WHERE phonemes = '{}'", s),
+            SearchMode::Normal => format!("SELECT * FROM english WHERE word = '{}'", s),
+        };
+        result.push(exec_query(query).await);
+    }
+    result
 }
 
 impl Component for App {
@@ -127,27 +112,11 @@ impl Component for App {
         self.first_load = false;
         match msg {
             Msg::SearchStart(search) => {
-                // Living dangerously with no checks...
+                // Living dangerously with no checks... ikz!
                 ctx.link().send_message(Msg::Searching(search));
-
-                // if !is_worker_initialized() {
-                //     let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
-                //     let x = JsValue::from_serde(&v).unwrap();
-                //     spawn_local(wrap(
-                //         wrapped_create_db_worker(vec![x], search),
-                //         ctx.link().callback(|s| Msg::Searching(s)),
-                //     ));
-                // } else {
-                //     ctx.link().send_message(Msg::Searching(search));
-                // }
                 false
             }
             Msg::Searching(search) => {
-                let search = search
-                    .split_ascii_whitespace()
-                    .map(|w| format!("\"{}\"", w))
-                    .join(",");
-
                 spawn_local(wrap(
                     query(self.mode, search),
                     ctx.link().callback(|results| Msg::Results(results)),
