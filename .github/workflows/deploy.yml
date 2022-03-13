@@ -90,7 +90,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: web-deploy
-
-      - name: Deploy on CFP
-        run: |
-          curl -X POST ${{ secrets.OPAL_WEB_HOOK }}
+      # - name: Deploy on CFP
+      #   run: |
+      #     curl -X POST ${{ secrets.OPAL_WEB_HOOK }}

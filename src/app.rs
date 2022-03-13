@@ -89,8 +89,8 @@ impl Component for App {
             spawn_local(async {
                 create_db_worker(
                     vec![x],
-                    "/static/code/sqlite.worker.js",
-                    "/static/code/sql-wasm.wasm",
+                    "/opal/static/code/sqlite.worker.js",
+                    "/opal/static/code/sql-wasm.wasm",
                 )
                 .await;
             });
