@@ -25,8 +25,8 @@ yew = "0.19"
 
 
 [features]
-default = ["console_log", "log"]
-# default = []
+# default = ["console_log", "log"]
+default = []
 
 [profile.release]
 lto = true
