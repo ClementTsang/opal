@@ -324,7 +324,6 @@ checksum = "9def91fd1e018fe007022791f865d0ccc9b3a0d5001e01aabb8b40e46000afb5"
 [[package]]
 name = "sql-js-httpvfs-rs"
 version = "0.0.1"
-source = "git+https://github.com/ClementTsang/sql.js-httpvfs-rs#53de79d0197e40389e1f11d834bdff577e5e66d0"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
