@@ -21,6 +21,7 @@ jobs:
         with:
           node-version: "16"
 
+      # TODO: Fix key
       - uses: actions/cache@v2
         with:
           path: ~/.npm
@@ -32,6 +33,7 @@ jobs:
           npm install -g tailwindcss@3.0.18
 
       - name: Install Rust toolchain
+
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
