@@ -1,0 +1,55 @@
+name: check
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test-building:
+    name: test-building
+    runs-on: ubuntu-latest
+    env:
+      RUST_BACKTRACE: 1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      # TODO: Fix key
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Install tailwindcss
+        run: |
+          npm install -g tailwindcss@3.0.18
+
+      - name: Install Rust toolchain
+
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v1
+        with:
+          cache-on-failure: true
+
+      - name: Install trunk and wasm-bindgen-cli
+        run: |
+          cargo install trunk --version ~0.14 --locked
+          cargo install wasm-bindgen-cli --version ~0.2 --locked
+
+      - name: Build
+        run: |
+          trunk build

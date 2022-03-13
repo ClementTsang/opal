@@ -1,5 +1,5 @@
 use crate::components::*;
-use web_sys::{HtmlInputElement, KeyboardEvent};
+use web_sys::{HtmlInputElement, KeyboardEvent, MouseEvent};
 use yew::{classes, function_component, functional::*, html, Callback, NodeRef, Properties};
 
 #[derive(Clone, PartialEq, Properties)]
@@ -9,19 +9,22 @@ pub struct SearchBarProps {
     pub on_toggle: Callback<()>,
     pub placeholder: &'static str,
     pub toggle_text: &'static str,
+    pub first_load: bool,
 }
 
 #[function_component(SearchBar)]
 pub fn search_bar(props: &SearchBarProps) -> Html {
     let input_ref = props.text_ref.clone();
-    {
-        let input_ref = input_ref.clone();
-        use_effect(move || {
-            if let Some(input) = input_ref.cast::<HtmlInputElement>() {
-                let _ = input.focus();
-            }
-            || ()
-        });
+    if props.first_load {
+        {
+            let input_ref = input_ref.clone();
+            use_effect(move || {
+                if let Some(input) = input_ref.cast::<HtmlInputElement>() {
+                    let _ = input.focus();
+                }
+                || ()
+            });
+        }
     }
 
     let search_bar_classes = classes!(
@@ -70,7 +73,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     let search_onclick = {
         let input_ref = input_ref.clone();
         let on_search = props.on_search.clone();
-        move |_| {
+        move |_e: MouseEvent| {
             let s = input_ref
                 .cast::<HtmlInputElement>()
                 .map(|input| input.value())
@@ -81,9 +84,9 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         }
     };
     let toggle_onclick = {
-        let on_search = props.on_toggle.clone();
-        move |_| {
-            on_search.emit(());
+        let on_toggle = props.on_toggle.clone();
+        move |_e: MouseEvent| {
+            on_toggle.emit(());
         }
     };
     let onkeypress = {
@@ -105,7 +108,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     html! {
         <div class={search_bar_classes}>
             <button title="Toggle between searching IPA and text" class={toggle_classes} onclick={toggle_onclick}>{props.toggle_text}</button>
-            <input class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {onkeypress} />
+            <input title="Search query" class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {onkeypress} />
             <button title="Search" class={button_classes} onclick={search_onclick}>
                 <span class={icon_classes}>
                     <MagnifyingGlassIcon/>

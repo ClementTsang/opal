@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use sql_js_httpvfs_rs::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
@@ -14,12 +13,9 @@ const DB_CONFIG: &str = r#"
 {
     "from": "inline",
     "config": {
-        "serverMode": "chunked",
-        "requestChunkSize": 4096,
-        "databaseLengthBytes": 3502080,
-        "serverChunkSize": 10485760,
-        "urlPrefix": "../databases/db.sqlite3.",
-        "suffixLength": 3
+        "serverMode": "full",
+        "requestChunkSize": 1024,
+        "url": "../databases/db.sqlite3"
     }
 }
 "#;
@@ -30,7 +26,7 @@ type PromiseResult = Result<JsValue, JsValue>;
 pub enum Msg {
     SearchStart(String),
     Searching(String),
-    Results(PromiseResult),
+    Results(Vec<PromiseResult>),
     Toggle,
 }
 
@@ -59,7 +55,7 @@ impl SearchMode {
 pub struct App {
     dark_mode: bool,
     mode: SearchMode,
-    worker_created: bool,
+    first_load: bool,
 }
 
 // From https://github.com/yewstack/yew/issues/364#issuecomment-737138847
@@ -67,22 +63,17 @@ async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::
     finished_callback.emit(f.await);
 }
 
-async fn query(mode: SearchMode, search: String) -> PromiseResult {
-    let query = match mode {
-        SearchMode::Ipa => format!("SELECT * FROM english WHERE phonemes in ({})", search),
-        SearchMode::Normal => format!("SELECT * FROM english WHERE word in ({})", search),
-    };
-    exec_query(query).await
-}
-
-async fn wrapped_create_db_worker(configs: Vec<JsValue>, search: String) -> String {
-    create_db_worker(
-        configs,
-        "/static/code/sqlite.worker.js",
-        "/static/code/sql-wasm.wasm",
-    )
-    .await;
-    search
+async fn query(mode: SearchMode, search: String) -> Vec<PromiseResult> {
+    let splits = search.split_ascii_whitespace();
+    let mut result = Vec::with_capacity(splits.size_hint().1.unwrap_or(0));
+    for s in splits {
+        let query = match mode {
+            SearchMode::Ipa => format!("SELECT * FROM english WHERE phonemes = '{}'", s),
+            SearchMode::Normal => format!("SELECT * FROM english WHERE word = '{}'", s),
+        };
+        result.push(exec_query(query).await);
+    }
+    result
 }
 
 impl Component for App {
@@ -90,6 +81,20 @@ impl Component for App {
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
+        if !is_worker_initialized() {
+            // This is *really* dumb but I don't think JsValue can just parse from
+            // a string -> object.
+            let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
+            let x = JsValue::from_serde(&v).unwrap();
+            spawn_local(async {
+                create_db_worker(
+                    vec![x],
+                    "/static/code/sqlite.worker.js",
+                    "/static/code/sql-wasm.wasm",
+                )
+                .await;
+            });
+        }
         Self {
             dark_mode: web_sys::window()
                 .and_then(|window| window.match_media("(prefers-color-scheme: dark)").ok())
@@ -99,38 +104,24 @@ impl Component for App {
                 })
                 .unwrap_or(false),
             mode: SearchMode::Normal,
-            worker_created: false,
+            first_load: true,
         }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        self.first_load = false;
         match msg {
             Msg::SearchStart(search) => {
-                if !self.worker_created {
-                    let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
-                    let x = JsValue::from_serde(&v).unwrap();
-                    spawn_local(wrap(
-                        wrapped_create_db_worker(vec![x], search),
-                        ctx.link().callback(|s| Msg::Searching(s)),
-                    ));
-                } else {
-                    ctx.link().send_message(Msg::Searching(search));
-                }
-
-                true
+                // Living dangerously with no checks... ikz!
+                ctx.link().send_message(Msg::Searching(search));
+                false
             }
             Msg::Searching(search) => {
-                self.worker_created = true;
-                let search = search
-                    .split_ascii_whitespace()
-                    .map(|w| format!("\"{}\"", w))
-                    .join(",");
-
                 spawn_local(wrap(
                     query(self.mode, search),
                     ctx.link().callback(|results| Msg::Results(results)),
                 ));
-                true
+                false
             }
             Msg::Results(results) => {
                 // Get results
@@ -174,7 +165,7 @@ impl Component for App {
         html! {
             <div class={root_classes}>
                 <p class={title_classes}>{"opal"}</p>
-                <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()}/>
+                <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load}/>
             </div>
         }
     }

@@ -3,6 +3,8 @@ name: deploy
 on:
   workflow_dispatch:
   push:
+    branches:
+      - "master"
 
 env:
   # Assign commit authorship to official Github Actions bot when pushing to the `web-deploy` branch:
@@ -26,6 +28,7 @@ jobs:
         with:
           node-version: "16"
 
+      # TODO: Fix key
       - uses: actions/cache@v2
         with:
           path: ~/.npm
@@ -80,15 +83,6 @@ jobs:
       - name: Optimize with binaryen and wasm-opt
         run: |
           python3 ./scripts/optimize.py ./dist
-
-      # - name: Push to web-deploy branch
-      #   run: |
-      #     git checkout --orphan web-deploy
-      #     git reset
-      #     rm .gitignore
-      #     git add dist
-      #     git commit -m "deploying opal"
-      #     git push --set-upstream origin web-deploy -f
 
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3

@@ -26,7 +26,7 @@ module.exports = {
           "Noto Color Emoji",
         ],
         input: [
-          "IBM Plex Mono",
+          "Source Code Pro",
           "ui-monospace",
           "SFMono-Regular",
           "Menlo",
