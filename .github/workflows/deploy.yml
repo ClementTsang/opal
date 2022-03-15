@@ -73,7 +73,7 @@ jobs:
 
       - name: Build
         run: |
-          trunk build --release
+          TRUNK_BUILD_PUBLIC_URL="/opal/" trunk build --release
 
       - name: Setup Python
         uses: actions/setup-python@v2
