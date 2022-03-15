@@ -28,6 +28,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     }
 
     let search_bar_classes = classes!(
+        "dark:bg-slate-700",
         "bg-white",
         "flex",
         "md:w-3/4",
@@ -39,7 +40,11 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "pl-4",
     );
     let input_classes = classes!(
+        "dark:bg-slate-700",
         "bg-white",
+        "placeholder:text-gray-400",
+        "placeholder:dark:text-gray-500",
+        "dark:text-slate-50",
         "font-input",
         "md:text-lg",
         "text-base",
@@ -50,23 +55,30 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "min-w-0",
     );
     let button_classes = classes!(
+        "dark:bg-slate-700",
+        "bg-white",
+        "dark:text-gray-400",
         "flex-none",
         "flex",
         "items-center",
         "justify-center",
         "px-4",
-        "bg-white",
-        "hover:bg-sky-600",
-        "hover:text-white",
+        "hover:bg-blue-500",
+        "hover:text-slate-50",
+        "hover:dark:bg-blue-500",
+        "hover:dark:text-slate-50",
     );
     let toggle_classes = classes!(
         "h-10",
         "w-10",
         "rounded-full",
         "hover:bg-slate-100",
+        "hover:dark:bg-slate-600",
+        "dark:text-slate-50",
         "self-center",
         "font-input",
         "text-sm",
+        "text-center",
     );
     let icon_classes = classes!("w-5", "h-5");
 

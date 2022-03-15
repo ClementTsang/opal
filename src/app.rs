@@ -54,7 +54,6 @@ impl SearchMode {
 }
 
 pub struct App {
-    dark_mode: bool,
     mode: SearchMode,
     first_load: bool,
 }
@@ -92,15 +91,9 @@ impl Component for App {
                 create_db_worker(vec![x], "./static/code/sqlite.worker.js", "./sql-wasm.wasm")
                     .await;
             });
+            // TODO: handle failure properly with some message.
         }
         Self {
-            dark_mode: web_sys::window()
-                .and_then(|window| window.match_media("(prefers-color-scheme: dark)").ok())
-                .map(|res| match res {
-                    Some(res) => res.matches(),
-                    None => false,
-                })
-                .unwrap_or(false),
             mode: SearchMode::Normal,
             first_load: true,
         }
@@ -137,22 +130,25 @@ impl Component for App {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let root_classes = {
-            let mut c = vec![
-                "h-screen",
-                "bg-teal-300",
-                "flex",
-                "flex-col",
-                "items-center",
-                "justify-center",
-                "gap-4",
-            ];
-            if self.dark_mode {
-                c.push("dark");
-            }
-            classes!(c)
+        let root_classes = classes!(
+            "min-h-screen",
+            "flex",
+            "flex-col",
+            "items-center",
+            "justify-center",
+            "gap-4",
+            "dark:bg-slate-900",
+            "bg-slate-200",
+        );
+        let title_classes = {
+            classes!(
+                "text-6xl",
+                "pb-6",
+                "font-body",
+                "dark:text-slate-50",
+                "text-slate-900",
+            )
         };
-        let title_classes = classes!("text-6xl", "pb-6", "font-body");
 
         let text_ref = NodeRef::default();
         let link = ctx.link();
