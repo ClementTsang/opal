@@ -1,3 +1,4 @@
+use concat_string::concat_string;
 use sql_js_httpvfs_rs::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
@@ -66,11 +67,12 @@ async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::
 async fn query(mode: SearchMode, search: String) -> Vec<PromiseResult> {
     let splits = search.split_ascii_whitespace();
     let mut result = Vec::with_capacity(splits.size_hint().1.unwrap_or(0));
+    let mode = match mode {
+        SearchMode::Ipa => " phonemes = '",
+        SearchMode::Normal => " word = '",
+    };
     for s in splits {
-        let query = match mode {
-            SearchMode::Ipa => format!("SELECT * FROM english WHERE phonemes = '{}'", s),
-            SearchMode::Normal => format!("SELECT * FROM english WHERE word = '{}'", s),
-        };
+        let query = concat_string!("SELECT * FROM english WHERE", mode, s, "';");
         result.push(exec_query(query).await);
     }
     result
@@ -87,12 +89,8 @@ impl Component for App {
             let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
             let x = JsValue::from_serde(&v).unwrap();
             spawn_local(async {
-                create_db_worker(
-                    vec![x],
-                    "/opal/static/code/sqlite.worker.js",
-                    "/opal/static/code/sql-wasm.wasm",
-                )
-                .await;
+                create_db_worker(vec![x], "./static/code/sqlite.worker.js", "./sql-wasm.wasm")
+                    .await;
             });
         }
         Self {

@@ -30,12 +30,12 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     let search_bar_classes = classes!(
         "bg-white",
         "flex",
-        "lg:w-1/3",
-        "md:w-1/2",
-        "w-2/3",
+        "md:w-3/4",
+        "w-11/12",
         "rounded-full",
         "overflow-hidden",
         "min-w-0",
+        "max-w-[580px]",
         "pl-4",
     );
     let input_classes = classes!(

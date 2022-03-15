@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+concat-string = "1.0.1"
 console_log = { version = "0.2", optional = true }
 log = { version = "0.4", optional = true }
 js-sys = "0.3"
