@@ -14,13 +14,7 @@ sql-js-httpvfs-rs = { git = "https://github.com/ClementTsang/sql.js-httpvfs-rs" 
 # sql-js-httpvfs-rs = { path = "../sql.js-httpvfs-rs" }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4"
-web-sys = { version = "0.3", features = [
-    "MediaQueryList",
-    "Window",
-    "HtmlTextAreaElement",
-    "EventTarget",
-    "Event",
-] }
+web-sys = { version = "0.3", features = ["Window", "EventTarget", "Event"] }
 yew = "0.19"
 
 

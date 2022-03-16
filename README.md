@@ -5,6 +5,10 @@ some IPA phonetics. Written in Yew and styled with Tailwind.
 
 Support for other languages may be added in the future.
 
+## Why...?
+
+[See why here.](Why.md)
+
 ## Thanks
 
 - The English word-to-phonetic mappings were determined using [CMUdict](https://github.com/cmusphinx/cmudict) as a base,

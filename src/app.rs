@@ -1,4 +1,5 @@
 use concat_string::concat_string;
+use js_sys::{Array, Function};
 use sql_js_httpvfs_rs::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
@@ -99,6 +100,19 @@ impl Component for App {
         }
     }
 
+    fn rendered(&mut self, _ctx: &Context<Self>, first_render: bool) {
+        if first_render {
+            if let Some(window) = web_sys::window() {
+                let func = Function::new_no_args(
+                        "document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);",
+                    );
+                if func.apply(&JsValue::NULL, &Array::new()).is_ok() {
+                    window.set_onresize(Some(&func));
+                }
+            }
+        }
+    }
+
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         self.first_load = false;
         match msg {
@@ -131,7 +145,7 @@ impl Component for App {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let root_classes = classes!(
-            "min-h-screen",
+            "h-screen",
             "flex",
             "flex-col",
             "items-center",
