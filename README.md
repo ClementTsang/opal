@@ -9,6 +9,12 @@ Support for other languages may be added in the future.
 
 [See why here.](Why.md)
 
+## Development/Installation
+
+- Built with Rust 1.59.0 - it'll probably work with older versions but this is what I tested on.
+- Uses Tailwind 3.0.18.
+- I use Trunk in combination with http-server to make changes.
+
 ## Thanks
 
 - The English word-to-phonetic mappings were determined using [CMUdict](https://github.com/cmusphinx/cmudict) as a base,

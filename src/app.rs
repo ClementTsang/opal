@@ -1,5 +1,6 @@
 use concat_string::concat_string;
 use js_sys::{Array, Function};
+use serde::Deserialize;
 use sql_js_httpvfs_rs::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
@@ -22,13 +23,10 @@ const DB_CONFIG: &str = r#"
 }
 "#;
 
-type PromiseResult = Result<JsValue, JsValue>;
-
 #[derive(Clone)]
 pub enum Msg {
     SearchStart(String),
-    Searching(String),
-    Results(Vec<PromiseResult>),
+    Results(Vec<SearchResult>),
     Toggle,
 }
 
@@ -36,6 +34,12 @@ pub enum Msg {
 enum SearchMode {
     Ipa,
     Normal,
+}
+
+#[derive(Deserialize, Debug, Clone, PartialEq)]
+pub struct SearchResult {
+    pub word: String,
+    pub phonemes: String,
 }
 
 impl SearchMode {
@@ -57,6 +61,8 @@ impl SearchMode {
 pub struct App {
     mode: SearchMode,
     first_load: bool,
+    is_busy: bool,
+    displayed_results: Vec<SearchResult>,
 }
 
 // From https://github.com/yewstack/yew/issues/364#issuecomment-737138847
@@ -64,7 +70,7 @@ async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::
     finished_callback.emit(f.await);
 }
 
-async fn query(mode: SearchMode, search: String) -> Vec<PromiseResult> {
+async fn query(mode: SearchMode, search: String) -> Vec<SearchResult> {
     let splits = search.split_ascii_whitespace();
     let mut result = Vec::with_capacity(splits.size_hint().1.unwrap_or(0));
     let mode = match mode {
@@ -73,7 +79,12 @@ async fn query(mode: SearchMode, search: String) -> Vec<PromiseResult> {
     };
     for s in splits {
         let query = concat_string!("SELECT * FROM english WHERE", mode, s, "';");
-        result.push(exec_query(query).await);
+        if let Ok(res) = exec_query(query).await {
+            let entry = js_sys::Array::from(&res).get(0);
+            if let Ok(res) = entry.into_serde() {
+                result.push(res);
+            }
+        }
     }
     result
 }
@@ -97,12 +108,15 @@ impl Component for App {
         Self {
             mode: SearchMode::Normal,
             first_load: true,
+            is_busy: false,
+            displayed_results: vec![],
         }
     }
 
     fn rendered(&mut self, _ctx: &Context<Self>, first_render: bool) {
         if first_render {
             if let Some(window) = web_sys::window() {
+                // A hack to force full height on mobile through JS code.
                 let func = Function::new_no_args(
                         "document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);",
                     );
@@ -118,19 +132,16 @@ impl Component for App {
         match msg {
             Msg::SearchStart(search) => {
                 // Living dangerously with no checks... ikz!
-                ctx.link().send_message(Msg::Searching(search));
-                false
-            }
-            Msg::Searching(search) => {
+                self.is_busy = true;
                 spawn_local(wrap(
                     query(self.mode, search),
                     ctx.link().callback(|results| Msg::Results(results)),
                 ));
-                false
+                true
             }
             Msg::Results(results) => {
-                // Get results
-                debug!("Results: {:?}", results);
+                self.displayed_results = results;
+                self.is_busy = false;
                 true
             }
             Msg::Toggle => {
@@ -170,10 +181,14 @@ impl Component for App {
         let on_toggle = link.callback(|_| Msg::Toggle);
         let placeholder: &'static str = self.mode.placeholder_text();
 
+        // TODO: animation and proper placement when results are shown
         html! {
             <div class={root_classes}>
                 <p class={title_classes}>{"opal"}</p>
                 <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load}/>
+                if !self.displayed_results.is_empty() {
+                    <DisplayedResults to_display={self.displayed_results.clone()}/>
+                }
             </div>
         }
     }

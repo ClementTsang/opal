@@ -3,3 +3,6 @@ pub use search_bar::*;
 
 pub mod magnifying_glass;
 pub use magnifying_glass::*;
+
+pub mod displayed_results;
+pub use displayed_results::*;
