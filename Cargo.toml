@@ -5,17 +5,16 @@ edition = "2021"
 
 [dependencies]
 concat-string = "1.0.1"
-console_log = { version = "0.2", optional = true }
-log = { version = "0.4", optional = true }
-js-sys = "0.3"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-sql-js-httpvfs-rs = { git = "https://github.com/ClementTsang/sql.js-httpvfs-rs" }
-# sql-js-httpvfs-rs = { path = "../sql.js-httpvfs-rs" }
-wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4"
-web-sys = { version = "0.3", features = ["Window", "EventTarget", "Event"] }
-yew = "0.19"
+console_log = { version = "0.2.0", optional = true }
+log = { version = "0.4.14", optional = true }
+js-sys = "0.3.56"
+serde = { version = "1.0.136", features = ["derive"] }
+serde_json = "1.0.79"
+sql-js-httpvfs-rs = "0.0.1"
+wasm-bindgen = { version = "0.2.79", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.29"
+web-sys = { version = "0.3.56", features = ["Window", "EventTarget", "Event"] }
+yew = "0.19.3"
 
 
 [features]
