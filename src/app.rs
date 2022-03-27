@@ -89,22 +89,25 @@ async fn query(mode: SearchMode, search: String) -> Vec<SearchResult> {
     result
 }
 
+fn initialize_worker_if_missing() {
+    if !is_worker_initialized() {
+        // This is *really* dumb but I don't think JsValue can just parse from
+        // a string -> object.
+        let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
+        let x = JsValue::from_serde(&v).unwrap();
+        spawn_local(async {
+            create_db_worker(vec![x], "./static/code/sqlite.worker.js", "./sql-wasm.wasm").await;
+        });
+        // TODO: handle failure properly with some message.
+    }
+}
+
 impl Component for App {
     type Message = Msg;
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
-        if !is_worker_initialized() {
-            // This is *really* dumb but I don't think JsValue can just parse from
-            // a string -> object.
-            let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
-            let x = JsValue::from_serde(&v).unwrap();
-            spawn_local(async {
-                create_db_worker(vec![x], "./static/code/sqlite.worker.js", "./sql-wasm.wasm")
-                    .await;
-            });
-            // TODO: handle failure properly with some message.
-        }
+        initialize_worker_if_missing();
         Self {
             mode: SearchMode::Normal,
             first_load: true,
@@ -131,7 +134,8 @@ impl Component for App {
         self.first_load = false;
         match msg {
             Msg::SearchStart(search) => {
-                // Living dangerously with no checks... ikz!
+                initialize_worker_if_missing();
+
                 self.is_busy = true;
                 spawn_local(wrap(
                     query(self.mode, search),
@@ -140,6 +144,7 @@ impl Component for App {
                 true
             }
             Msg::Results(results) => {
+                debug!("results: {:?}", results);
                 self.displayed_results = results;
                 self.is_busy = false;
                 true
