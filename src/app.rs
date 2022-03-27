@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use concat_string::concat_string;
 use js_sys::{Array, Function};
 use serde::Deserialize;
@@ -26,7 +28,7 @@ const DB_CONFIG: &str = r#"
 #[derive(Clone)]
 pub enum Msg {
     SearchStart(String),
-    Results(Vec<SearchResult>),
+    Results(SearchResults),
     Toggle,
 }
 
@@ -37,10 +39,12 @@ enum SearchMode {
 }
 
 #[derive(Deserialize, Debug, Clone, PartialEq)]
-pub struct SearchResult {
+pub struct QueryResult {
     pub word: String,
     pub phonemes: String,
 }
+
+pub type SearchResults = (Vec<String>, HashMap<String, Vec<String>>);
 
 impl SearchMode {
     fn placeholder_text(&self) -> &'static str {
@@ -62,7 +66,7 @@ pub struct App {
     mode: SearchMode,
     first_load: bool,
     is_busy: bool,
-    displayed_results: Vec<SearchResult>,
+    displayed_results: SearchResults,
 }
 
 // From https://github.com/yewstack/yew/issues/364#issuecomment-737138847
@@ -70,23 +74,40 @@ async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::
     finished_callback.emit(f.await);
 }
 
-async fn query(mode: SearchMode, search: String) -> Vec<SearchResult> {
+async fn query(search_mode: SearchMode, search: String) -> SearchResults {
     let splits = search.split_ascii_whitespace();
-    let mut result = Vec::with_capacity(splits.size_hint().1.unwrap_or(0));
-    let mode = match mode {
-        SearchMode::Ipa => " phonemes = '",
-        SearchMode::Normal => " word = '",
+    let mut result = HashMap::with_capacity(splits.size_hint().1.unwrap_or(0));
+    let mode = match &search_mode {
+        SearchMode::Ipa => " phonemes in (",
+        SearchMode::Normal => " word in (",
     };
-    for s in splits {
-        let query = concat_string!("SELECT * FROM english WHERE", mode, s, "';");
-        if let Ok(res) = exec_query(query).await {
-            let entry = js_sys::Array::from(&res).get(0);
-            if let Ok(res) = entry.into_serde() {
-                result.push(res);
+
+    let search_items = splits.map(|s| s.to_ascii_lowercase()).collect::<Vec<_>>();
+    let list = search_items
+        .iter()
+        .map(|s| concat_string!("'", s, "'"))
+        .collect::<Vec<_>>()
+        .join(",");
+    let query = concat_string!("SELECT * FROM english WHERE", mode, list, ");");
+    if let Ok(res) = exec_query(query).await {
+        match &search_mode {
+            SearchMode::Ipa => {
+                for entry in js_sys::Array::from(&res).iter() {
+                    if let Ok(QueryResult { word, phonemes }) = entry.into_serde() {
+                        result.entry(phonemes).or_insert_with(|| vec![]).push(word);
+                    }
+                }
+            }
+            SearchMode::Normal => {
+                for entry in js_sys::Array::from(&res).iter() {
+                    if let Ok(QueryResult { word, phonemes }) = entry.into_serde() {
+                        result.entry(word).or_insert_with(|| vec![]).push(phonemes);
+                    }
+                }
             }
         }
     }
-    result
+    (search_items, result)
 }
 
 fn initialize_worker_if_missing() {
@@ -112,7 +133,7 @@ impl Component for App {
             mode: SearchMode::Normal,
             first_load: true,
             is_busy: false,
-            displayed_results: vec![],
+            displayed_results: SearchResults::default(),
         }
     }
 
@@ -144,7 +165,6 @@ impl Component for App {
                 true
             }
             Msg::Results(results) => {
-                debug!("results: {:?}", results);
                 self.displayed_results = results;
                 self.is_busy = false;
                 true
@@ -191,7 +211,7 @@ impl Component for App {
             <div class={root_classes}>
                 <p class={title_classes}>{"opal"}</p>
                 <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load}/>
-                if !self.displayed_results.is_empty() {
+                if !self.displayed_results.0.is_empty() {
                     <DisplayedResults to_display={self.displayed_results.clone()}/>
                 }
             </div>
