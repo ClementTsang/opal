@@ -1,5 +1,5 @@
 use crate::components::*;
-use web_sys::{HtmlInputElement, KeyboardEvent, MouseEvent};
+use web_sys::{HtmlInputElement, KeyboardEvent};
 use yew::{classes, function_component, functional::*, html, Callback, NodeRef, Properties};
 
 #[derive(Clone, PartialEq, Properties)]
@@ -54,6 +54,14 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "pl-1",
         "min-w-0",
     );
+    let x_button_classes = classes!(
+        "dark:text-gray-400",
+        "flex-none",
+        "flex",
+        "items-center",
+        "justify-center",
+        "px-2"
+    );
     let button_classes = classes!(
         "dark:bg-slate-700",
         "bg-white",
@@ -80,12 +88,25 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "text-sm",
         "text-center",
     );
+    let x_mark_classes = classes!("w-4", "h-4");
     let icon_classes = classes!("w-5", "h-5");
 
+    let text_empty = use_state_eq(|| true);
+
+    let clear_text = {
+        let text_empty = text_empty.clone();
+        let input_ref = input_ref.clone();
+        move |_e| {
+            if let Some(element) = input_ref.cast::<HtmlInputElement>() {
+                element.set_value("");
+                text_empty.set(true);
+            }
+        }
+    };
     let search_onclick = {
         let input_ref = input_ref.clone();
         let on_search = props.on_search.clone();
-        move |_e: MouseEvent| {
+        move |_e| {
             let s = input_ref
                 .cast::<HtmlInputElement>()
                 .map(|input| input.value())
@@ -97,7 +118,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     };
     let toggle_onclick = {
         let on_toggle = props.on_toggle.clone();
-        move |_e: MouseEvent| {
+        move |_e| {
             on_toggle.emit(());
         }
     };
@@ -116,11 +137,31 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
             }
         }
     };
+    let oninput = {
+        let text_empty = text_empty.clone();
+        let input_ref = input_ref.clone();
+
+        move |_e| {
+            let s = input_ref
+                .cast::<HtmlInputElement>()
+                .map(|input| input.value())
+                .unwrap_or_default();
+
+            text_empty.set(s.is_empty());
+        }
+    };
 
     html! {
         <div class={search_bar_classes}>
             <button title="Toggle between searching IPA and text" class={toggle_classes} onclick={toggle_onclick}>{props.toggle_text}</button>
-            <input title="Search query" class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {onkeypress} />
+            <input title="Search query" class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {oninput} {onkeypress} />
+            if !(*text_empty) {
+                <button title="Clear" class={x_button_classes} onclick={clear_text}>
+                    <span class={x_mark_classes}>
+                        <XMarkIcon/>
+                    </span>
+                </button>
+            }
             <button title="Search" class={button_classes} onclick={search_onclick}>
                 <span class={icon_classes}>
                     <MagnifyingGlassIcon/>
