@@ -194,7 +194,7 @@ impl Component for App {
             classes!(
                 "text-6xl",
                 "pb-6",
-                "font-body",
+                "font-title",
                 "dark:text-slate-50",
                 "text-slate-900",
             )

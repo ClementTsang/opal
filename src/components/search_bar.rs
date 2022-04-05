@@ -14,6 +14,8 @@ pub struct SearchBarProps {
 
 #[function_component(SearchBar)]
 pub fn search_bar(props: &SearchBarProps) -> Html {
+    let text_empty = use_state_eq(|| true);
+
     let input_ref = props.text_ref.clone();
     if props.first_load {
         {
@@ -45,7 +47,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "placeholder:text-gray-400",
         "placeholder:dark:text-gray-500",
         "dark:text-slate-50",
-        "font-input",
+        "font-body",
         "md:text-lg",
         "text-base",
         "h-12",
@@ -90,8 +92,6 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     );
     let x_mark_classes = classes!("w-4", "h-4");
     let icon_classes = classes!("w-5", "h-5");
-
-    let text_empty = use_state_eq(|| true);
 
     let clear_text = {
         let text_empty = text_empty.clone();

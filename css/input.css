@@ -4,6 +4,12 @@
 
 @font-face {
   font-family: OpenSans;
+  src: url(./static/fonts/OpenSans-Regular.ttf) format("truetype");
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: OpenSansLight;
   src: url(./static/fonts/OpenSans-Light.ttf) format("truetype");
   font-display: fallback;
 }
