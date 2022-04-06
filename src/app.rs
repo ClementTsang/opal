@@ -185,14 +185,16 @@ impl Component for App {
             "flex",
             "flex-col",
             "items-center",
-            "justify-center",
+            "justify-start",
             "gap-4",
             "dark:bg-slate-900",
             "bg-slate-200",
+            "overflow-y-auto",
         );
         let title_classes = {
             classes!(
                 "text-6xl",
+                "pt-10",
                 "pb-6",
                 "font-title",
                 "dark:text-slate-50",

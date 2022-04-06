@@ -35,11 +35,11 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "flex",
         "md:w-3/4",
         "w-11/12",
-        "rounded-full",
+        "rounded-md",
         "overflow-hidden",
         "min-w-0",
-        "max-w-[580px]",
-        "pl-4",
+        "max-w-[840px]",
+        "pl-2",
     );
     let input_classes = classes!(
         "dark:bg-slate-700",
@@ -81,7 +81,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     let toggle_classes = classes!(
         "h-10",
         "w-10",
-        "rounded-full",
+        "rounded-md",
         "hover:bg-slate-100",
         "hover:dark:bg-slate-600",
         "dark:text-slate-50",
