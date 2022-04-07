@@ -1,5 +1,3 @@
-extern crate wee_alloc;
-
 mod app;
 use app::*;
 

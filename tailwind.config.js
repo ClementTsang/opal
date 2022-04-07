@@ -66,6 +66,9 @@ module.exports = {
           "monospace",
         ],
       },
+      dropShadow: {
+        light: "0 2px 4px rgba(0,0,0,0.12)",
+      },
     },
   },
   plugins: [],

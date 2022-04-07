@@ -29,17 +29,17 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         }
     }
 
+    let search_bar_wrap_classes = classes!("md:w-3/4", "w-11/12", "min-w-0", "max-w-[840px]",);
+
     let search_bar_classes = classes!(
         "dark:bg-slate-700",
         "bg-white",
         "flex",
-        "md:w-3/4",
-        "w-11/12",
         "rounded-md",
         "overflow-hidden",
-        "min-w-0",
-        "max-w-[840px]",
+        "w-full",
         "pl-2",
+        "drop-shadow-light",
     );
     let input_classes = classes!(
         "dark:bg-slate-700",
@@ -152,21 +152,23 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     };
 
     html! {
-        <div class={search_bar_classes}>
-            <button title="Toggle between searching IPA and text" class={toggle_classes} onclick={toggle_onclick}>{props.toggle_text}</button>
-            <input title="Search query" class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {oninput} {onkeypress} />
-            if !(*text_empty) {
-                <button title="Clear" class={x_button_classes} onclick={clear_text}>
-                    <span class={x_mark_classes}>
-                        <XMarkIcon/>
+        <div class={search_bar_wrap_classes}>
+            <div class={search_bar_classes}>
+                <button title="Toggle between searching IPA and text" class={toggle_classes} onclick={toggle_onclick}>{props.toggle_text}</button>
+                <input title="Search query" class={input_classes} type="text" id="search" placeholder={props.placeholder} ref={input_ref} {oninput} {onkeypress} />
+                if !(*text_empty) {
+                    <button title="Clear" class={x_button_classes} onclick={clear_text}>
+                        <span class={x_mark_classes}>
+                            <XMarkIcon/>
+                        </span>
+                    </button>
+                }
+                <button title="Search" class={button_classes} onclick={search_onclick}>
+                    <span class={icon_classes}>
+                        <MagnifyingGlassIcon/>
                     </span>
                 </button>
-            }
-            <button title="Search" class={button_classes} onclick={search_onclick}>
-                <span class={icon_classes}>
-                    <MagnifyingGlassIcon/>
-                </span>
-            </button>
+            </div>
         </div>
     }
 }

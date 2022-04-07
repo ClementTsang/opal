@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use concat_string::concat_string;
+use indexmap::IndexSet;
 use js_sys::{Array, Function};
 use serde::Deserialize;
 use sql_js_httpvfs_rs::*;
@@ -82,10 +83,12 @@ async fn query(search_mode: SearchMode, search: String) -> SearchResults {
         SearchMode::Normal => " word in (",
     };
 
-    let search_items = splits.map(|s| s.to_ascii_lowercase()).collect::<Vec<_>>();
+    let search_items = splits
+        .map(|s| s.to_ascii_lowercase())
+        .collect::<IndexSet<_>>();
     let list = search_items
         .iter()
-        .map(|s| concat_string!("'", s, "'"))
+        .map(|s| concat_string!("'", s.replace("'", "''"), "'"))
         .collect::<Vec<_>>()
         .join(",");
     let query = concat_string!("SELECT * FROM english WHERE", mode, list, ");");
@@ -107,7 +110,7 @@ async fn query(search_mode: SearchMode, search: String) -> SearchResults {
             }
         }
     }
-    (search_items, result)
+    (search_items.into_iter().collect::<Vec<_>>(), result)
 }
 
 fn initialize_worker_if_missing() {
@@ -187,8 +190,8 @@ impl Component for App {
             "items-center",
             "justify-start",
             "gap-4",
-            "dark:bg-slate-900",
-            "bg-slate-200",
+            "dark:bg-slate-800",
+            "bg-slate-100",
             "overflow-y-auto",
         );
         let title_classes = {
