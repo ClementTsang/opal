@@ -9,11 +9,23 @@ Support for other languages may be added in the future.
 
 [See why here.](Why.md)
 
-## Development/Installation
+## Development
 
-- Built with Rust 1.59.0 - it'll probably work with older versions but this is what I tested on.
-- Uses Tailwind 3.0.18.
-- I use Trunk in combination with http-server to make changes.
+Note that opal was developed and built with:
+
+- Rust 1.60.0 - it'll probably work with older versions but this is what I tested on
+- Uses Tailwind 3.0.18
+
+### Installation
+
+1. Clone the repo.
+2. Run `setup.sh` to initialize all required SQLite databases. Note this will require `git`, `sqlite`, Python 3.9 or later, and `pandas` installed on your machine.
+3. Install [`trunk`](https://github.com/thedodd/trunk). This is used to build things, as well as be a convenient tool for development.
+4. Install some static HTTP server tool that supports byte ranges. I personally use [http-server](https://www.npmjs.com/package/http-server).
+5. Install [Tailwind CSS](https://tailwindcss.com/).
+6. Run `trunk build`. If you're developing and want builds upon saving, use `trunk watch` instead. This will build to `./dist`.
+7. In another terminal, run the HTTP server. For `http-server`, you can `cd dist/` and `http-server ./`
+8. For release builds, run `trunk build --release`. For more details on optimizations, look at [the deploy workflow.](./.github/workflows/deploy.yml)
 
 ## Thanks
 
