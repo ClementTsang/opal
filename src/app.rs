@@ -215,8 +215,11 @@ impl Component for App {
         html! {
             <div class={root_classes}>
                 <p class={title_classes}>{"opal"}</p>
-                <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load}/>
-                if !self.displayed_results.0.is_empty() {
+                <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load} is_busy={self.is_busy}/>
+                if self.is_busy {
+                    <SpinnerIcon />
+                }
+                else if !self.displayed_results.0.is_empty() {
                     <DisplayedResults to_display={self.displayed_results.clone()}/>
                 }
             </div>

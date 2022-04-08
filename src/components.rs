@@ -9,3 +9,6 @@ pub use x_mark::*;
 
 pub mod displayed_results;
 pub use displayed_results::*;
+
+pub mod spinner;
+pub use spinner::*;

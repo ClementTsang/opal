@@ -11,7 +11,6 @@ pub struct DisplayedResultsProps {
 #[function_component(DisplayedResults)]
 pub fn displayed_results(props: &DisplayedResultsProps) -> Html {
     let results_class = classes!(
-        "pt-4",
         "pb-6",
         "md:w-3/4",
         "w-11/12",

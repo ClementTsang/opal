@@ -10,6 +10,7 @@ pub struct SearchBarProps {
     pub placeholder: &'static str,
     pub toggle_text: &'static str,
     pub first_load: bool,
+    pub is_busy: bool,
 }
 
 #[function_component(SearchBar)]
@@ -39,6 +40,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "overflow-hidden",
         "w-full",
         "pl-2",
+        "mb-4",
         "drop-shadow-light",
     );
     let input_classes = classes!(
@@ -66,8 +68,8 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
     );
     let button_classes = classes!(
         "dark:bg-slate-700",
-        "bg-white",
         "dark:text-gray-400",
+        "bg-white",
         "flex-none",
         "flex",
         "items-center",
@@ -77,6 +79,10 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "hover:text-slate-50",
         "hover:dark:bg-blue-500",
         "hover:dark:text-slate-50",
+        "disabled:bg-white",
+        "disabled:text-slate-100",
+        "disabled:dark:bg-slate-700",
+        "disabled:dark:text-slate-600",
     );
     let toggle_classes = classes!(
         "h-10",
@@ -163,7 +169,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
                         </span>
                     </button>
                 }
-                <button title="Search" class={button_classes} onclick={search_onclick}>
+                <button title="Search" class={button_classes} onclick={search_onclick} disabled={props.is_busy}>
                     <span class={icon_classes}>
                         <MagnifyingGlassIcon/>
                     </span>
