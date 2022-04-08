@@ -4,6 +4,12 @@
 
 @font-face {
   font-family: OpenSans;
+  src: url(./static/fonts/OpenSans-Regular.ttf) format("truetype");
+  font-display: fallback;
+}
+
+/* @font-face {
+  font-family: OpenSansLight;
   src: url(./static/fonts/OpenSans-Light.ttf) format("truetype");
   font-display: fallback;
 }
@@ -11,5 +17,23 @@
 @font-face {
   font-family: Source Code Pro;
   src: url(./static/fonts/SourceCodePro-Medium.otf.woff2) format("woff");
+  font-display: fallback;
+} */
+
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("./static/fonts/subset-SourceCodePro-Medium.woff2") format("woff2"),
+    url("./static/fonts/subset-SourceCodePro-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: "OpenSansLight";
+  src: url("./static/fonts/subset-OpenSans-Light.woff2") format("woff2"),
+    url("./static/fonts/subset-OpenSans-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
   font-display: fallback;
 }

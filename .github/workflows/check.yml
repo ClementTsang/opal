@@ -50,6 +50,16 @@ jobs:
           cargo install trunk --version ~0.14 --locked
           cargo install wasm-bindgen-cli --version ~0.2 --locked
 
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Setup DBs
+        run: |
+          pip install -r ./scripts/cmudict/requirements.txt
+          ./setup.sh
+
       - name: Build
         run: |
           trunk build

@@ -3,16 +3,14 @@ use app::*;
 
 mod components;
 
-#[cfg(feature = "console_log")]
-fn init_log() {
-    use log::Level;
-    console_log::init_with_level(Level::Trace).expect("error initializing log");
-}
-
-#[cfg(not(feature = "console_log"))]
-fn init_log() {}
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 fn main() {
-    init_log();
+    #[cfg(feature = "console_log")]
+    {
+        use log::Level;
+        console_log::init_with_level(Level::Trace).expect("error initializing log");
+    }
     yew::start_app::<App>();
 }

@@ -12,4 +12,4 @@ target/
 
 # Static things that don't need to be distributed in the repo
 tailwind.css
-# static/databases/
+static/databases/
