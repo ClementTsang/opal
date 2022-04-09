@@ -30,8 +30,8 @@ A few reasons I decided on Rust for this project:
 - I've always wanted to take a crack at trying to build a frontend with [Yew](https://yew.rs/), and at the time of
   writing, it looks like the most mature framework (though [dioxus](https://dioxuslabs.com/) looks interesting as well).
 - Exploring WASM-related stuff in general is super interesting, and while I've played with it in some capacity with things
-  like [Polify](https://github.com/ClementTsang/polify), making an entire frontend that relies on WASM and messing
-  with [JS-to-Rust bindings](https://github.com/ClementTsang/sql.js-httpvfs-rs), was a fun learning experience.
+  like [Polify](https://github.com/ClementTsang/polify), making a frontend (technically my second) that relies on WASM
+  and messing with [JS-to-Rust bindings](https://github.com/ClementTsang/sql.js-httpvfs-rs), was a fun learning experience.
 
 Of course, doing it like this added way more difficulty than I needed - primarily around having to learn bindings, and
 the Rust web frontend ecosystem is immature at best.

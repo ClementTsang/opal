@@ -30,6 +30,9 @@ pub fn displayed_results(props: &DisplayedResultsProps) -> Html {
         "px-4",
         "py-4",
         "dark:text-slate-50",
+        "border-solid",
+        "border-l-[6px]",
+        "border-blue-500",
     );
 
     let word_class = classes!("font-body", "font-bold", "text-lg", "pb-1");
@@ -41,16 +44,27 @@ pub fn displayed_results(props: &DisplayedResultsProps) -> Html {
         "md:text-lg",
         "text-base",
         "dark:text-slate-50",
-        "antialiased"
+        "subpixel-antialiased",
     );
 
     html! {
         <div class={results_class}>
             { props.to_display.0.iter().map(|search| {
+                let search_result = props.to_display.1.get(search);
+
                 html!{
-                    <div class={card_classes.clone()} key={search.as_str()}>
+                    <div
+                        class={
+                            let mut c = card_classes.clone();
+                            if search_result.is_none() {
+                                c.push("border-red-500");
+                            }
+                            c
+                        }
+                        key={search.as_str()}
+                    >
                         <div class={word_class.clone()}>{search}</div>
-                        if let Some(results) = props.to_display.1.get(search) {
+                        if let Some(results) = search_result {
                             <div class={classes!("flex", "flex-col", "gap-1")}>
                             {
                                 results.iter().map(|result| {
@@ -65,7 +79,7 @@ pub fn displayed_results(props: &DisplayedResultsProps) -> Html {
                         } else {
                             <div class={{
                                 let mut r = result_class.clone();
-                                r.push("text-red-600");
+                                r.push("text-red-700");
                                 r.push("dark:text-red-500");
                                 r
                             }}>

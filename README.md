@@ -38,7 +38,7 @@ Note that opal was developed and built with:
 ## Credits
 
 - The English (US) IPA mappings were created using [CMUdict](https://github.com/cmusphinx/cmudict) as a base
-  ([license](https://github.com/cmusphinx/cmudict/blob/master/LICENSE)), converted from ARPABET to IPA following the
+  (see [original license](https://github.com/cmusphinx/cmudict/blob/master/LICENSE)), converted from ARPABET to IPA following the
   mappings on [Wikipedia](https://en.wikipedia.org/wiki/ARPABET).
 - The entire idea of hosting a SQLite database on a static webpage comes from [phiresky's blog](https://phiresky.github.io/blog/2021/hosting-sqlite-databases-on-github-pages/),
   using their [sql.js-httpvfs](https://github.com/phiresky/sql.js-httpvfs), which I wrote [simple bindings for](https://github.com/ClementTsang/sql.js-httpvfs-rs).
