@@ -14,7 +14,16 @@ serde_json = "1.0.79"
 sql-js-httpvfs-rs = "0.0.1"
 wasm-bindgen = { version = "0.2.79", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.29"
-web-sys = { version = "0.3.56", features = ["Window", "EventTarget", "Event"] }
+web-sys = { version = "0.3.56", features = [
+    "Window",
+    "MediaQueryList",
+    "DomTokenList",
+    "Document",
+    "Element",
+    "EventTarget",
+    "Event",
+    "Storage",
+] }
 wee_alloc = "0.4.5"
 yew = "0.19.3"
 
