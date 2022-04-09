@@ -44,3 +44,4 @@ Note that opal was developed and built with:
   using their [sql.js-httpvfs](https://github.com/phiresky/sql.js-httpvfs), which I wrote [simple bindings for](https://github.com/ClementTsang/sql.js-httpvfs-rs).
 - Written in [Yew](https://yew.rs/).
 - Styling from [Tailwind CSS](https://tailwindcss.com/).
+- Fonts from [Open Sans](https://github.com/googlefonts/opensans) and [Source Code Pro](https://github.com/adobe-fonts/source-code-pro).
