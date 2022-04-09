@@ -35,7 +35,13 @@ pub fn displayed_results(props: &DisplayedResultsProps) -> Html {
         "border-blue-500",
     );
 
-    let word_class = classes!("font-body", "font-bold", "text-lg", "pb-1");
+    let word_class = classes!(
+        "font-body",
+        "font-bold",
+        "text-lg",
+        "pb-1",
+        "subpixel-antialiased"
+    );
 
     let result_class = classes!(
         "font-body",

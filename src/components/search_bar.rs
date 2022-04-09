@@ -96,7 +96,7 @@ pub fn search_bar(props: &SearchBarProps) -> Html {
         "text-sm",
         "text-center",
     );
-    let x_mark_classes = classes!("w-4", "h-4");
+    let x_mark_classes = classes!("w-4", "h-4", "text-slate-400", "hover:text-slate-500");
     let icon_classes = classes!("w-5", "h-5");
 
     let clear_text = {

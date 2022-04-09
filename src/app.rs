@@ -256,9 +256,14 @@ impl Component for App {
                                 window.match_media("(prefers-color-scheme: dark)")
                             {
                                 toggle_dark(mql.matches());
-                                mql.set_onchange(Some(&Function::new_no_args(
+
+                                // TODO: Use a closure to properly hook into Yew state.
+                                // Maybe see https://github.com/rustwasm/wasm-bindgen/issues/843 and
+                                // https://stackoverflow.com/a/19014495
+                                mql.set_onchange(Some(&Function::new_with_args(
+                                    "e",
                                     "
-                                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                                if (e.matches) {
                                     document.documentElement.classList.add('dark')
                                 } else {
                                     document.documentElement.classList.remove('dark')
@@ -309,16 +314,23 @@ impl Component for App {
         );
         let title_classes = classes!(
             "text-6xl",
-            "pt-10",
+            "pt-16",
             "pb-6",
             "font-title",
             "dark:text-slate-50",
             "text-slate-900",
         );
-        let option_div_classes = classes!("absolute", "top-0", "right-0", "mr-[20px]", "mt-[18px]");
-        let mode_button_classes = classes!(
-            "w-full",
-            "h-full",
+        let option_div_classes = classes!(
+            "absolute",
+            "top-0",
+            "right-0",
+            "mr-[20px]",
+            "mt-[18px]",
+            "flex",
+            "flex-row",
+            "gap-x-4",
+        );
+        let option_button_classes = classes!(
             "flex",
             "items-center",
             "justify-center",
@@ -328,6 +340,62 @@ impl Component for App {
             "rounded-md"
         );
         let mode_button_div_classes = classes!("h-5", "w-5", "text-blue-400");
+        let modal_back_classes = classes!(
+            "hidden",
+            "fixed",
+            "top-0",
+            "left-0",
+            "w-full",
+            "h-full",
+            "outline-none",
+            "overflow-x-hidden",
+            "overflow-y-auto",
+            "flex",
+            "justify-center",
+            "z-50",
+            "bg-gray-700",
+            "bg-opacity-50",
+        );
+        let modal_classes = classes!(
+            "relative",
+            "rounded-md",
+            "overflow-hidden",
+            "bg-white",
+            "dark:bg-slate-700",
+            "text-left",
+            "w-full",
+            "max-w-2xl",
+            "h-full",
+            "md:h-auto",
+            "m-auto",
+            "p-8",
+            "flex",
+            "flex-col",
+            "gap-5",
+            "drop-shadow-light",
+        );
+        let modal_header = classes!(
+            "text-lg",
+            "font-body",
+            "font-bold",
+            "dark:text-slate-50",
+            "subpixel-antialiased",
+            "pb-0.5",
+        );
+        let modal_text = classes!(
+            "md:leading-snug",
+            "leading-snug",
+            "font-body",
+            "text-base",
+            "dark:text-slate-50",
+            "subpixel-antialiased",
+        );
+        let link_hover = classes!(
+            "text-blue-500",
+            "dark:text-blue-400",
+            "hover:text-blue-700",
+            "hover:dark:text-blue-300"
+        );
 
         let text_ref = NodeRef::default();
         let link = ctx.link();
@@ -335,12 +403,32 @@ impl Component for App {
         let on_toggle = link.callback(|_| Msg::ToggleSearchType);
         let placeholder: &'static str = self.mode.placeholder_text();
         let open_theme_window = link.callback(|_| Msg::CycleThemeMode);
+        let open_modal = Callback::from(|_| {
+            if let Some(window) = web_sys::window() {
+                if let Some(document) = window.document() {
+                    if let Some(modal) = document.get_element_by_id("infoModal") {
+                        let _ = modal.class_list().remove_1("hidden");
+                    }
+                }
+            }
+        });
+        let close_modal = Callback::from(|_| {
+            if let Some(window) = web_sys::window() {
+                if let Some(document) = window.document() {
+                    if let Some(modal) = document.get_element_by_id("infoModal") {
+                        let _ = modal.class_list().add_1("hidden");
+                    }
+                }
+            }
+        });
+
+        let about_text = "opal is a simple static webapp to look up the IPA phonetics of English words, or vice versa. More language support or sources may be added in the future.";
 
         html! {
             <div class={root_classes}>
                 <div class={option_div_classes}>
-                    <button title="Change theme" class={mode_button_classes} onclick={open_theme_window}>
-                        <div class={mode_button_div_classes}>
+                    <button title="Change theme" class={option_button_classes.clone()} onclick={open_theme_window}>
+                        <div class={mode_button_div_classes.clone()}>
                         {
                             match self.current_theme_mode {
                                 ThemeMode::Dark => html!{<MoonIcon />},
@@ -350,6 +438,70 @@ impl Component for App {
                         }
                         </div>
                     </button>
+                    <button class={option_button_classes} onclick={open_modal}>
+                        <div class={mode_button_div_classes}>
+                            <InfoIcon/>
+                        </div>
+                    </button>
+                </div>
+                <div id="infoModal" tabindex="-1" aria-hidden="true" role="dialog" aria-modal="true" class={modal_back_classes} onclick={close_modal.clone()}>
+                    <div class={modal_classes} onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}>
+                        <div class={classes!("absolute", "top-0", "right-0", "mr-[8px]", "mt-[8px]",)}>
+                            <button class={classes!( "flex", "items-center", "justify-center", "rounded-md")} onclick={close_modal}>
+                                <div class={classes!("w-4", "h-4", "text-slate-400", "hover:text-slate-500")}>
+                                    <XMarkIcon />
+                                </div>
+                            </button>
+                        </div>
+                        <div>
+                            <h1 class={modal_header.clone()}>
+                                {"About"}
+                            </h1>
+                            <div class={modal_text.clone()}>
+                                <p>
+                                    {about_text}
+                                </p>
+                                <br/>
+                                <p>
+                                    {"All source code can be found "}
+                                    <a href="https://github.com/ClementTsang/opal" target="_blank" class={link_hover.clone()}>{"on GitHub"}</a>
+                                    {"."}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h1 class={modal_header.clone()}>
+                                {"Credits"}
+                            </h1>
+                            <p class={modal_text.clone()}>
+                                {"opal would not be possible without:"}
+                            </p>
+                            <div class={modal_text}>
+                                <ul class={classes!("list-disc", "pl-5", "pt-1")}>
+                                    <li>
+                                        { "English (US) IPA mappings based on " }
+                                        <a href="https://github.com/cmusphinx/cmudict" target="_blank" class={link_hover.clone()}>{"CMUDict"}</a>
+                                        { " (see " }
+                                        <a href="https://github.com/cmusphinx/cmudict/blob/master/LICENSE" target="_blank" class={link_hover.clone()}>{"original license"}</a>
+                                        {")" }
+                                    </li>
+                                    <li>
+                                        <a href="https://phiresky.github.io/blog/2021/hosting-sqlite-databases-on-github-pages/" target="_blank" class={link_hover.clone()}>{"phiresky"}</a>
+                                        { " for the idea of hosting SQLite on a static webpage, and writing libraries to do so." }
+                                    </li>
+                                    <li>
+                                        <a href="https://yew.rs/" target="_blank" class={link_hover.clone()}>{"Yew"}</a>
+                                        { ", the Rust frontend framework used to write this." }
+                                    </li>
+                                    <li>
+                                        <a href="https://tailwindcss.com/" target="_blank" class={link_hover.clone()}>{"Tailwind CSS"}</a>
+                                        { ", the CSS framework used because I'm bad at CSS." }
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <p class={title_classes}>{"opal"}</p>
                 <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load} is_busy={self.is_busy}/>
