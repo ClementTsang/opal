@@ -1,9 +1,9 @@
 # opal
 
-opal is a simple, static webapp to look up the IPA phonetics of English words, or look up English words from
-some IPA phonetics. Written in Yew and styled with Tailwind.
+opal is a simple static webapp to look up the IPA phonetics of English words, or vice versa. Written in Yew and styled
+with Tailwind.
 
-Support for other languages may be added in the future.
+Support for more sources or even other languages may be added in the future.
 
 ## Why...
 
@@ -42,3 +42,5 @@ Note that opal was developed and built with:
   mappings on [Wikipedia](https://en.wikipedia.org/wiki/ARPABET).
 - The entire idea of hosting a SQLite database on a static webpage comes from [phiresky's blog](https://phiresky.github.io/blog/2021/hosting-sqlite-databases-on-github-pages/),
   using their [sql.js-httpvfs](https://github.com/phiresky/sql.js-httpvfs), which I wrote [simple bindings for](https://github.com/ClementTsang/sql.js-httpvfs-rs).
+- Written in [Yew](https://yew.rs/).
+- Styling from [Tailwind CSS](https://tailwindcss.com/).

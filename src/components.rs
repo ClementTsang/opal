@@ -21,3 +21,6 @@ pub use moon_icon::*;
 
 pub mod computer_icon;
 pub use computer_icon::*;
+
+pub mod info_icon;
+pub use info_icon::*;
