@@ -64,7 +64,7 @@ pub type SearchResults = (Vec<String>, HashMap<String, Vec<String>>);
 impl SearchMode {
     fn placeholder_text(&self) -> &'static str {
         match self {
-            SearchMode::Ipa => "oʊpəl",
+            SearchMode::Ipa => "oʊpʌl",
             SearchMode::Normal => "opal",
         }
     }
@@ -307,16 +307,27 @@ impl Component for App {
             "bg-slate-100",
             "overflow-y-auto",
         );
-        let title_classes = {
-            classes!(
-                "text-6xl",
-                "pt-10",
-                "pb-6",
-                "font-title",
-                "dark:text-slate-50",
-                "text-slate-900",
-            )
-        };
+        let title_classes = classes!(
+            "text-6xl",
+            "pt-10",
+            "pb-6",
+            "font-title",
+            "dark:text-slate-50",
+            "text-slate-900",
+        );
+        let option_div_classes = classes!("absolute", "top-0", "right-0", "mr-[20px]", "mt-[18px]");
+        let mode_button_classes = classes!(
+            "w-full",
+            "h-full",
+            "flex",
+            "items-center",
+            "justify-center",
+            "p-1.5",
+            "hover:bg-slate-300",
+            "hover:dark:bg-slate-600",
+            "rounded-md"
+        );
+        let mode_button_div_classes = classes!("h-5", "w-5", "text-blue-400");
 
         let text_ref = NodeRef::default();
         let link = ctx.link();
@@ -327,9 +338,9 @@ impl Component for App {
 
         html! {
             <div class={root_classes}>
-                <div class={classes!("absolute", "top-0", "right-0", "mr-[20px]", "mt-[18px]")}>
-                    <button title="Change theme" class={classes!("w-full", "h-full", "flex", "items-center", "justify-center", "p-1.5", "hover:bg-slate-300", "hover:dark:bg-slate-600", "rounded-md")} onclick={open_theme_window}>
-                        <div class={classes!("h-5", "w-5", "text-blue-400")}>
+                <div class={option_div_classes}>
+                    <button title="Change theme" class={mode_button_classes} onclick={open_theme_window}>
+                        <div class={mode_button_div_classes}>
                         {
                             match self.current_theme_mode {
                                 ThemeMode::Dark => html!{<MoonIcon />},
