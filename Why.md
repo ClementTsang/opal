@@ -6,13 +6,14 @@ Answers to some "why" questions I'm sure some people will have.
 
 Short answer: Why not?
 
-Longer answer: I was a bit bored and wanted a small project to work on, I wanted to play with WASM and Yew,
+Longer answer: I was a bit bored and wanted a small project that I could work on in small chunks, I wanted to play with WASM and Yew,
 I wanted to try using Tailwind, and I just took an intro to linguistics class. This all consolidated into working on
-this overly-complicated-and-unnecessary project.
+this overly-complicated and unnecessary project.
 
 ## Why "opal"?
 
-I like making my project names silly acronyms, jokes, or puns.
+I like making my project names silly acronyms, jokes, or puns. If you haven't seen the repo description, opal here stands
+for "Oxidized Phonetics Alphabet Lookup". Why did I choose this acronym? I have no idea.
 
 ## Why did you not use a conventional backend/DB setup? Why a static page?
 
@@ -26,7 +27,7 @@ or pay for upkeep sounds like a perfect use case for this concept.
 A few reasons I decided on Rust for this project:
 
 - I program primarily in Rust in my free time, if you haven't seen my other repos, so I guess it's not surprising I
-  thought about using it here.
+  thought about using it here, even in an area its not particularly known for.
 - I've always wanted to take a crack at trying to build a frontend with [Yew](https://yew.rs/), and at the time of
   writing, it looks like the most mature framework (though [dioxus](https://dioxuslabs.com/) looks interesting as well).
 - Exploring WASM-related stuff in general is super interesting, and while I've played with it in some capacity with things
@@ -34,11 +35,12 @@ A few reasons I decided on Rust for this project:
   and messing with [JS-to-Rust bindings](https://github.com/ClementTsang/sql.js-httpvfs-rs), was a fun learning experience.
 
 Of course, doing it like this added way more difficulty than I needed - primarily around having to learn bindings, and
-the Rust web frontend ecosystem is immature at best.
+the Rust web frontend ecosystem is passable at best.
 
 If this was a more serious project, I would have definitely gone with just using JS (or more likely, Typescript), which
-would be far easier to work with. However, since this project was more for exploration and fun, I'm happy with my
-choice, and I learned a lot from it.
+would be far easier to work with - there is/was stuff that I did during this project that would have definitely been
+easier in JS-land. However, since this project was more for exploration and fun, I'm fine with going with unconventional
+choices, and I learned a lot from doing so anyways.
 
 ## Why Tailwind?
 
