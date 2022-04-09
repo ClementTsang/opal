@@ -2,11 +2,12 @@ use std::collections::HashMap;
 
 use concat_string::concat_string;
 use indexmap::IndexSet;
-use js_sys::{Array, Function};
+use js_sys::Function;
 use serde::Deserialize;
 use sql_js_httpvfs_rs::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
+use web_sys::MediaQueryList;
 use yew::prelude::*;
 
 #[cfg(feature = "console_log")]
@@ -26,11 +27,24 @@ const DB_CONFIG: &str = r#"
 }
 "#;
 
+const OPAL_THEME_KEY: &str = "opal_theme";
+const DARK_THEME: &str = "dark";
+const LIGHT_THEME: &str = "light";
+
 #[derive(Clone)]
 pub enum Msg {
     SearchStart(String),
     Results(SearchResults),
-    Toggle,
+    ToggleSearchType,
+    ToggleThemeMode(ThemeMode),
+    CycleThemeMode,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum ThemeMode {
+    Dark,
+    Light,
+    System,
 }
 
 #[derive(Clone, Copy)]
@@ -68,6 +82,8 @@ pub struct App {
     first_load: bool,
     is_busy: bool,
     displayed_results: SearchResults,
+    current_theme_mode: ThemeMode,
+    mql: Option<MediaQueryList>,
 }
 
 // From https://github.com/yewstack/yew/issues/364#issuecomment-737138847
@@ -126,6 +142,22 @@ fn initialize_worker_if_missing() {
     }
 }
 
+fn theme_mode() -> ThemeMode {
+    if let Some(window) = web_sys::window() {
+        if let Ok(Some(local_storage)) = window.local_storage() {
+            if let Ok(Some(res)) = local_storage.get_item(OPAL_THEME_KEY) {
+                if res == DARK_THEME {
+                    return ThemeMode::Dark;
+                } else if res == LIGHT_THEME {
+                    return ThemeMode::Light;
+                }
+            }
+        }
+    }
+
+    ThemeMode::System
+}
+
 impl Component for App {
     type Message = Msg;
     type Properties = ();
@@ -137,20 +169,15 @@ impl Component for App {
             first_load: true,
             is_busy: false,
             displayed_results: SearchResults::default(),
+            current_theme_mode: theme_mode(),
+            mql: None,
         }
     }
 
-    fn rendered(&mut self, _ctx: &Context<Self>, first_render: bool) {
+    fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
         if first_render {
-            if let Some(window) = web_sys::window() {
-                // A hack to force full height on mobile through JS code.
-                let func = Function::new_no_args(
-                        "document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);",
-                    );
-                if func.apply(&JsValue::NULL, &Array::new()).is_ok() {
-                    window.set_onresize(Some(&func));
-                }
-            }
+            let callback = ctx.link().callback(|mode| Msg::ToggleThemeMode(mode));
+            callback.emit(self.current_theme_mode);
         }
     }
 
@@ -172,11 +199,97 @@ impl Component for App {
                 self.is_busy = false;
                 true
             }
-            Msg::Toggle => {
+            Msg::ToggleSearchType => {
                 self.mode = match &self.mode {
                     SearchMode::Ipa => SearchMode::Normal,
                     SearchMode::Normal => SearchMode::Ipa,
                 };
+                true
+            }
+            Msg::ToggleThemeMode(mode) => {
+                fn toggle_dark(enable: bool) {
+                    if let Some(window) = web_sys::window() {
+                        if let Some(document) = window.document() {
+                            if let Some(document_element) = document.document_element() {
+                                if enable {
+                                    let _ = document_element.class_list().add_1("dark");
+                                } else {
+                                    let _ = document_element.class_list().remove_1("dark");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                match mode {
+                    ThemeMode::Dark => {
+                        if let Some(window) = web_sys::window() {
+                            if let Some(mql) = &mut self.mql {
+                                mql.set_onchange(None);
+                            }
+
+                            if let Ok(Some(local_storage)) = window.local_storage() {
+                                let _ = local_storage.set_item(OPAL_THEME_KEY, DARK_THEME);
+                            }
+                        }
+                        toggle_dark(true);
+
+                        true
+                    }
+                    ThemeMode::Light => {
+                        if let Some(window) = web_sys::window() {
+                            if let Some(mql) = &mut self.mql {
+                                mql.set_onchange(None);
+                            }
+
+                            if let Ok(Some(local_storage)) = window.local_storage() {
+                                let _ = local_storage.set_item(OPAL_THEME_KEY, LIGHT_THEME);
+                            }
+                        }
+                        toggle_dark(false);
+
+                        true
+                    }
+                    ThemeMode::System => {
+                        if let Some(window) = web_sys::window() {
+                            if let Ok(Some(mql)) =
+                                window.match_media("(prefers-color-scheme: dark)")
+                            {
+                                toggle_dark(mql.matches());
+                                mql.set_onchange(Some(&Function::new_no_args(
+                                    "
+                                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                                    document.documentElement.classList.add('dark')
+                                } else {
+                                    document.documentElement.classList.remove('dark')
+                                }
+                                ",
+                                )));
+
+                                self.mql = Some(mql);
+                            }
+
+                            if let Ok(Some(local_storage)) = window.local_storage() {
+                                let _ = local_storage.remove_item(OPAL_THEME_KEY);
+                            }
+
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                }
+            }
+            Msg::CycleThemeMode => {
+                self.current_theme_mode = match self.current_theme_mode {
+                    ThemeMode::Dark => ThemeMode::Light,
+                    ThemeMode::Light => ThemeMode::System,
+                    ThemeMode::System => ThemeMode::Dark,
+                };
+
+                let callback = ctx.link().callback(|mode| Msg::ToggleThemeMode(mode));
+                callback.emit(self.current_theme_mode);
+
                 true
             }
         }
@@ -208,12 +321,26 @@ impl Component for App {
         let text_ref = NodeRef::default();
         let link = ctx.link();
         let on_search = link.callback(|s: String| Msg::SearchStart(s));
-        let on_toggle = link.callback(|_| Msg::Toggle);
+        let on_toggle = link.callback(|_| Msg::ToggleSearchType);
         let placeholder: &'static str = self.mode.placeholder_text();
+        let open_theme_window = link.callback(|_| Msg::CycleThemeMode);
 
         // TODO: animation and proper placement when results are shown
         html! {
             <div class={root_classes}>
+                <div class={classes!("absolute", "top-0", "right-0", "mr-[20px]", "mt-[18px]")}>
+                    <button title="Change theme" class={classes!("w-full", "h-full", "flex", "items-center", "justify-center", "p-1.5", "hover:bg-slate-300", "hover:dark:bg-slate-600", "rounded-md")} onclick={open_theme_window}>
+                        <div class={classes!("h-5", "w-5", "text-blue-400")}>
+                        {
+                            match self.current_theme_mode {
+                                ThemeMode::Dark => html!{<MoonIcon />},
+                                ThemeMode::Light => html!{<SunIcon />},
+                                ThemeMode::System => html!{<ComputerIcon />},
+                            }
+                        }
+                        </div>
+                    </button>
+                </div>
                 <p class={title_classes}>{"opal"}</p>
                 <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load} is_busy={self.is_busy}/>
                 if self.is_busy {

@@ -12,3 +12,12 @@ pub use displayed_results::*;
 
 pub mod spinner;
 pub use spinner::*;
+
+pub mod sun_icon;
+pub use sun_icon::*;
+
+pub mod moon_icon;
+pub use moon_icon::*;
+
+pub mod computer_icon;
+pub use computer_icon::*;
