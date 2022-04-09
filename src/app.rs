@@ -325,7 +325,6 @@ impl Component for App {
         let placeholder: &'static str = self.mode.placeholder_text();
         let open_theme_window = link.callback(|_| Msg::CycleThemeMode);
 
-        // TODO: animation and proper placement when results are shown
         html! {
             <div class={root_classes}>
                 <div class={classes!("absolute", "top-0", "right-0", "mr-[20px]", "mt-[18px]")}>
