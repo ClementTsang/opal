@@ -1,7 +1,10 @@
-# opal
+<div align="center">
+  <h1>opal</h1>
+</div>
 
-opal is a simple static webapp to look up the IPA phonetics of English words, or vice versa. Written in Yew and styled
+opal (Oxidized Phonetics Alphabet Lookup) is a simple static webapp to look up the IPA phonetics of English words, or vice versa. Written in Yew and styled
 with Tailwind.
+
 
 Support for more sources or even other languages may be added in the future.
 
