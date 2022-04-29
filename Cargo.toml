@@ -38,3 +38,4 @@ default = ["console_log", "log"]
 [profile.release]
 lto = true
 opt-level = 's'
+panic = "abort"

@@ -22,7 +22,7 @@ hosting an SQLite database on Github Pages, and [sql.js-httpvfs](https://github.
 wanted to use it for some project - and a simple, read-only web application that I would prefer to not have to manage
 or pay for upkeep sounds like a perfect use case for this concept.
 
-## Why Rust? Why not just use JS or some derivative like a sane human being?
+## Why Rust for a frontend? Why not just use JS or some derivative?
 
 A few reasons I decided on Rust for this project:
 
