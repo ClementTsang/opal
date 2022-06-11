@@ -15,8 +15,8 @@ See answers to some questions some people will likely have [here.](Why.md)
 
 Note that opal was developed and built with:
 
-- Rust 1.60.0 - it'll probably work with older versions but this is what I tested on
-- Uses Tailwind 3.0.18
+- Rust 1.60.0 (it'll probably work with some older versions but this is what I tested on)
+- Tailwind 3.0.18
 
 ### Installation
 
