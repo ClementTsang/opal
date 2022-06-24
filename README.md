@@ -17,7 +17,7 @@ See answers to some questions some people will likely have [here.](Why.md)
 
 Note that opal was developed and built with:
 
-- Rust 1.60.0 (it'll probably work with some older versions but this is what I tested on)
+- Rust 1.60.0 (it'll probably work fine with some older versions but this is what I tested on)
 - Yew 0.19.3
 - Tailwind 3.0.18
 
@@ -29,23 +29,23 @@ general development, where it handles building to WASM and running the Tailwind 
 1. Clone the repo.
 2. Run `setup.sh` to initialize all required SQLite databases. Note this will require `git`, `sqlite`, Python 3.9 or
    later, and `pandas` installed on your machine.
-3. Install [`trunk`](https://github.com/thedodd/trunk). This is used to build things, as well as be a convenient tool
-   for development.
-4. Install some static HTTP server tool that supports byte ranges. I personally use [http-server](https://www.npmjs.com/package/http-server).
+3. Install [`trunk`](https://github.com/thedodd/trunk). This is used to build WASM and Tailwind.
+4. Install some static HTTP server tool that supports byte ranges. I personally used [`http-server`](https://www.npmjs.com/package/http-server).
 5. Install [Tailwind CSS](https://tailwindcss.com/).
-6. Run `trunk build`. If you're developing and want builds upon saving, use `trunk watch` instead. This will build
-   to `./dist`.
-7. In another terminal, run the HTTP server. For `http-server`, you can `cd dist/` and `http-server ./`
-8. For release builds, run `trunk build --release`. For more details on optimizations, look at
-   [the deploy workflow.](./.github/workflows/deploy.yml)
+6. Run `trunk build`. This will build to `./dist`. If you're working on opal and want automatic builds when saving,
+   use `trunk watch` instead. 
+8. In another terminal, run the HTTP server. For `http-server`, you can run `cd dist/` and `http-server ./` to do so.
+9. For release builds, run `trunk build --release`. For more details on optimizing the generated WASM code, look at
+   [the deploy workflow](./.github/workflows/deploy.yml) and [post-compilation optimization script](./scripts/optimize.py)
+   for how to optimize using minify and wasm-opt.
 
 ### Deployment
 
 1. Build with `trunk build --release`.
 2. Deploy the `dist/` folder. Note that the static webpage service you deploy to **must** properly support the
-   `Accept-Ranges=bytes` header - otherwise, you are **very likely to face problems**! It's not fun trying to
-   troubleshoot why SQLite complains of a malformed database on _only_ Firefox and incognito Chrome, or something
-   like that. Weird things may happen if it isn't supported!
+   `Accept-Ranges=bytes` header - otherwise, you are **very likely to face problems**! You might face weird
+   issues like SQLite complaining of a malformed database on _only_ Firefox and incognito Chrome, or something
+   along those lines. Basically, weird things may happen if it isn't supported!
 
    As of writing, GitHub Pages should work fine, and Cloudflare Pages is supposed to support it in the future. I
    haven't looked into other static webpage services.
