@@ -35,7 +35,7 @@ const LIGHT_THEME: &str = "light";
 pub enum Msg {
     SearchStart(String),
     Results(SearchResults),
-    ToggleSearchType,
+    ToggleSearchMode,
     ToggleThemeMode(ThemeMode),
     CycleThemeMode,
 }
@@ -47,10 +47,16 @@ pub enum ThemeMode {
     System,
 }
 
-#[derive(Clone, Copy)]
-enum SearchMode {
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum SearchMode {
     Ipa,
     Normal,
+}
+
+impl Default for SearchMode {
+    fn default() -> Self {
+        SearchMode::Normal
+    }
 }
 
 #[derive(Deserialize, Debug, Clone, PartialEq)]
@@ -59,7 +65,7 @@ pub struct QueryResult {
     pub phonemes: String,
 }
 
-pub type SearchResults = (Vec<String>, HashMap<String, Vec<String>>);
+pub type SearchResults = (Vec<String>, HashMap<String, Vec<String>>, SearchMode);
 
 impl SearchMode {
     fn placeholder_text(&self) -> &'static str {
@@ -78,7 +84,7 @@ impl SearchMode {
 }
 
 pub struct App {
-    mode: SearchMode,
+    search_mode: SearchMode,
     first_load: bool,
     is_busy: bool,
     displayed_results: SearchResults,
@@ -139,7 +145,11 @@ async fn query(search_mode: SearchMode, search: String) -> SearchResults {
             }
         }
     }
-    (search_items.into_iter().collect::<Vec<_>>(), result)
+    (
+        search_items.into_iter().collect::<Vec<_>>(),
+        result,
+        search_mode,
+    )
 }
 
 fn initialize_worker_if_missing() {
@@ -178,7 +188,7 @@ impl Component for App {
     fn create(_ctx: &Context<Self>) -> Self {
         initialize_worker_if_missing();
         Self {
-            mode: SearchMode::Normal,
+            search_mode: SearchMode::Normal,
             first_load: true,
             is_busy: false,
             displayed_results: SearchResults::default(),
@@ -202,7 +212,7 @@ impl Component for App {
 
                 self.is_busy = true;
                 spawn_local(wrap(
-                    query(self.mode, search),
+                    query(self.search_mode, search),
                     ctx.link().callback(|results| Msg::Results(results)),
                 ));
                 true
@@ -212,8 +222,8 @@ impl Component for App {
                 self.is_busy = false;
                 true
             }
-            Msg::ToggleSearchType => {
-                self.mode = match &self.mode {
+            Msg::ToggleSearchMode => {
+                self.search_mode = match &self.search_mode {
                     SearchMode::Ipa => SearchMode::Normal,
                     SearchMode::Normal => SearchMode::Ipa,
                 };
@@ -354,8 +364,8 @@ impl Component for App {
         let text_ref = NodeRef::default();
         let link = ctx.link();
         let on_search = link.callback(|s: String| Msg::SearchStart(s));
-        let on_toggle = link.callback(|_| Msg::ToggleSearchType);
-        let placeholder: &'static str = self.mode.placeholder_text();
+        let on_toggle = link.callback(|_| Msg::ToggleSearchMode);
+        let placeholder: &'static str = self.search_mode.placeholder_text();
         let open_theme_window = link.callback(|_| Msg::CycleThemeMode);
 
         let open_modal = Callback::from(|_| {
@@ -390,7 +400,7 @@ impl Component for App {
                 </div>
                 <InfoModal />
                 <p class={title_classes}>{"opal"}</p>
-                <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.mode.button_text()} first_load={self.first_load} is_busy={self.is_busy}/>
+                <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.search_mode.button_text()} first_load={self.first_load} is_busy={self.is_busy}/>
                 if self.is_busy {
                     <SpinnerIcon />
                 }
