@@ -24,3 +24,6 @@ pub use computer_icon::*;
 
 pub mod info_icon;
 pub use info_icon::*;
+
+pub mod info_modal;
+pub use info_modal::*;
