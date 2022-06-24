@@ -1,7 +1,7 @@
 use concat_string::concat_string;
 use yew::{classes, function_component, html, Html, Properties};
 
-use crate::app::SearchResults;
+use crate::app::{SearchMode, SearchResults};
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct DisplayedResultsProps {
@@ -53,6 +53,8 @@ pub fn displayed_results(props: &DisplayedResultsProps) -> Html {
         "subpixel-antialiased",
     );
 
+    let search_mode = props.to_display.2;
+
     html! {
         <div class={results_class}>
             { props.to_display.0.iter().map(|search| {
@@ -73,13 +75,26 @@ pub fn displayed_results(props: &DisplayedResultsProps) -> Html {
                         if let Some(results) = search_result {
                             <div class={classes!("flex", "flex-col", "gap-1")}>
                             {
-                                results.iter().map(|result| {
-                                    html! {
-                                        <div class={result_class.clone()} key={result.as_str()}>
-                                            { concat_string!("/", result, "/") }
-                                        </div>
+                                match search_mode {
+                                    SearchMode::Ipa => {
+                                        results.iter().map(|result| {
+                                            html! {
+                                                <div class={result_class.clone()} key={result.as_str()}>
+                                                    { result }
+                                                </div>
+                                            }
+                                        }).collect::<Html>()
                                     }
-                                }).collect::<Html>()
+                                    SearchMode::Normal => {
+                                        results.iter().map(|result| {
+                                            html! {
+                                                <div class={result_class.clone()} key={result.as_str()}>
+                                                    { concat_string!("/", result, "/") }
+                                                </div>
+                                            }
+                                        }).collect::<Html>()
+                                    }
+                                }
                             }
                             </div>
                         } else {
