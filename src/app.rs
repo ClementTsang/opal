@@ -320,8 +320,8 @@ impl Component for App {
             "text-slate-900",
         );
         let option_div_classes = classes!(
-            "mr-[32px]",
-            "mt-[18px]",
+            "pr-[18px]",
+            "pt-[18px]",
             "w-full",
             "flex",
             "flex-row-reverse",
