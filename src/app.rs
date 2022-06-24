@@ -91,6 +91,19 @@ async fn wrap<F: std::future::Future>(f: F, finished_callback: yew::Callback<F::
     finished_callback.emit(f.await);
 }
 
+fn process_query_str(query: &str) -> Option<String> {
+    let new_string = query
+        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .trim_start_matches(|c: char| c != '\'' && c.is_ascii_punctuation())
+        .to_ascii_lowercase();
+
+    if new_string.is_empty() {
+        None
+    } else {
+        Some(new_string)
+    }
+}
+
 async fn query(search_mode: SearchMode, search: String) -> SearchResults {
     let splits = search.split_ascii_whitespace();
     let mut result = HashMap::with_capacity(splits.size_hint().1.unwrap_or(0));
@@ -100,7 +113,7 @@ async fn query(search_mode: SearchMode, search: String) -> SearchResults {
     };
 
     let search_items = splits
-        .map(|s| s.to_ascii_lowercase())
+        .filter_map(|s| process_query_str(s))
         .collect::<IndexSet<_>>();
     let list = search_items
         .iter()
@@ -386,5 +399,20 @@ impl Component for App {
                 }
             </div>
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_string_stripping() {
+        assert_eq!(process_query_str("test"), Some("test".to_string()));
+        assert_eq!(process_query_str("'twas"), Some("'twas".to_string()));
+        assert_eq!(process_query_str("!twas"), Some("twas".to_string()));
+        assert_eq!(process_query_str("-"), None);
+        assert_eq!(process_query_str("!'twas!"), Some("'twas".to_string()));
+        assert_eq!(process_query_str("'twas'"), Some("'twas".to_string()));
     }
 }
