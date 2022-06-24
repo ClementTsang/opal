@@ -45,6 +45,10 @@ jobs:
         with:
           cache-on-failure: true
 
+      - name: Run tests
+        run: |
+          cargo test
+
       - name: Install trunk and wasm-bindgen-cli
         run: |
           cargo install trunk --version ~0.14 --locked
