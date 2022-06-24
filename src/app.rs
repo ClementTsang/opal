@@ -314,20 +314,17 @@ impl Component for App {
         );
         let title_classes = classes!(
             "text-6xl",
-            "pt-16",
             "pb-6",
             "font-title",
             "dark:text-slate-50",
             "text-slate-900",
         );
         let option_div_classes = classes!(
-            "absolute",
-            "top-0",
-            "right-0",
-            "mr-[20px]",
+            "mr-[32px]",
             "mt-[18px]",
+            "w-full",
             "flex",
-            "flex-row",
+            "flex-row-reverse",
             "gap-x-4",
         );
         let option_button_classes = classes!(
@@ -361,8 +358,13 @@ impl Component for App {
         html! {
             <div class={root_classes}>
                 <div class={option_div_classes}>
-                    <button title="Change theme" class={option_button_classes.clone()} onclick={open_theme_window}>
+                    <button class={option_button_classes.clone()} onclick={open_modal}>
                         <div class={mode_button_div_classes.clone()}>
+                            <InfoIcon/>
+                        </div>
+                    </button>
+                    <button title="Change theme" class={option_button_classes} onclick={open_theme_window}>
+                        <div class={mode_button_div_classes}>
                         {
                             match self.current_theme_mode {
                                 ThemeMode::Dark => html!{<MoonIcon />},
@@ -370,11 +372,6 @@ impl Component for App {
                                 ThemeMode::System => html!{<ComputerIcon />},
                             }
                         }
-                        </div>
-                    </button>
-                    <button class={option_button_classes} onclick={open_modal}>
-                        <div class={mode_button_div_classes}>
-                            <InfoIcon/>
                         </div>
                     </button>
                 </div>
