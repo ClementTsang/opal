@@ -56,6 +56,8 @@ Currently, only English (and a specific subset at that) is supported. However, s
 
 ## Credits
 
+opal would not be possible without the following:
+
 - The English (US) IPA mappings were created using [CMUdict](https://github.com/cmusphinx/cmudict) as a base
   (see [original license](https://github.com/cmusphinx/cmudict/blob/master/LICENSE)), converted from ARPABET to IPA following the
   mappings on [Wikipedia](https://en.wikipedia.org/wiki/ARPABET).
