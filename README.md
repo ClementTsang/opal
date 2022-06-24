@@ -52,7 +52,8 @@ general development, where it handles building to WASM and running the Tailwind 
    
 ## Support
 
-Currently, only English (and a specific subset at that) is supported. However, support for more sources or other languages may be added in the future, and theoretically isn't too hard to add.
+Currently, only English (and a specific subset at that) is supported. However, support for more sources or other
+languages isn't too difficult to add, and may be added in the future. PRs are certainly welcome.
 
 ## Credits
 
