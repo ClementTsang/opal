@@ -68,7 +68,7 @@ jobs:
 
       - name: Install trunk and wasm-bindgen-cli
         run: |
-          cargo install trunk --version ~0.14 --locked
+          cargo install trunk --version ~0.15 --locked
           cargo install wasm-bindgen-cli --version ~0.2 --locked
 
       - name: Setup Python
