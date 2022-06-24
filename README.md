@@ -17,8 +17,8 @@ Note that opal was developed and built with:
 - Rust 1.60.0 (it'll probably work with some older versions but this is what I tested on)
 - Tailwind 3.0.18
 
-Additionally, opal relies on [`trunk`](https://github.com/thedodd/trunk) for building and general development, handling
-building to WASM and the Tailwind hook.
+Additionally, opal relies on [`trunk`](https://github.com/thedodd/trunk) (0.15.0 as of writing) for building and
+general development, where it handles building to WASM and running the Tailwind hook.
 
 ### Installation
 
