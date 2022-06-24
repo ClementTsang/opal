@@ -1,10 +1,13 @@
 <div align="center">
   <h1>opal</h1>
+  
+  <p>
+    opal (Oxidized Phonetics Alphabet Lookup) is a simple static webapp to look up the IPA phonetics of English words, or vice versa.
+  </p>
 </div>
 
-opal (Oxidized Phonetics Alphabet Lookup) is a simple static webapp to look up the IPA phonetics of English words, or vice versa. Written with Yew and styled with Tailwind.
+https://user-images.githubusercontent.com/34804052/175511088-68dc2f3a-f793-4446-99f3-9997838ca4fc.mp4
 
-Support for more sources or even other languages may be added in the future.
 
 ## Why...
 
@@ -15,6 +18,7 @@ See answers to some questions some people will likely have [here.](Why.md)
 Note that opal was developed and built with:
 
 - Rust 1.60.0 (it'll probably work with some older versions but this is what I tested on)
+- Yew 0.19.3
 - Tailwind 3.0.18
 
 Additionally, opal relies on [`trunk`](https://github.com/thedodd/trunk) (0.15.0 as of writing) for building and
@@ -45,6 +49,10 @@ general development, where it handles building to WASM and running the Tailwind 
 
    As of writing, GitHub Pages should work fine, and Cloudflare Pages is supposed to support it in the future. I
    haven't looked into other static webpage services.
+   
+## Support
+
+Currently, only English (and a specific subset at that) is supported. However, support for more sources or other languages may be added in the future, and theoretically isn't too hard to add.
 
 ## Credits
 
