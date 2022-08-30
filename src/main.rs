@@ -3,9 +3,6 @@ use app::*;
 
 mod components;
 
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 fn main() {
     #[cfg(feature = "console_log")]
     {
