@@ -64,6 +64,6 @@ opal would not be possible without the following:
   mappings on [Wikipedia](https://en.wikipedia.org/wiki/ARPABET).
 - The entire idea of hosting a SQLite database on a static webpage comes from [phiresky's blog](https://phiresky.github.io/blog/2021/hosting-sqlite-databases-on-github-pages/),
   using their [sql.js-httpvfs](https://github.com/phiresky/sql.js-httpvfs), which I wrote [simple bindings for](https://github.com/ClementTsang/sql.js-httpvfs-rs).
-- Written in [Yew](https://yew.rs/).
+- Written using [Yew](https://yew.rs/).
 - Styling from [Tailwind CSS](https://tailwindcss.com/).
 - Fonts used are from [Open Sans](https://github.com/googlefonts/opensans) and [Source Code Pro](https://github.com/adobe-fonts/source-code-pro).
