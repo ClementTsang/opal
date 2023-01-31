@@ -8,7 +8,7 @@ description = "opal is a simple static webapp to look up the IPA phonetics of En
 concat-string = "1.0.1"
 console_log = { version = "0.2.0", optional = true }
 indexmap = "1.8.1"
-log = { version = "0.4.14", optional = true }
+log = { version = "0.4.17", optional = true }
 js-sys = "0.3.56"
 serde = { version = "1.0.136", features = ["derive"] }
 serde_json = "1.0.79"
