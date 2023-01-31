@@ -3,9 +3,8 @@ use std::collections::HashMap;
 use concat_string::concat_string;
 use indexmap::IndexSet;
 use js_sys::Function;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sql_js_httpvfs_rs::*;
-use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::MediaQueryList;
 use yew::prelude::*;
@@ -16,16 +15,29 @@ use log::debug;
 
 use crate::components::*;
 
-const DB_CONFIG: &str = r#"
-{
-    "from": "inline",
-    "config": {
-        "serverMode": "full",
-        "requestChunkSize": 1024,
-        "url": "../databases/db.sqlite3"
-    }
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct Configuration {
+    server_mode: &'static str,
+    request_chunk_size: u64,
+    url: &'static str,
 }
-"#;
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct DatabaseConfig {
+    from: &'static str,
+    config: Configuration,
+}
+
+const DB_CONFIG: DatabaseConfig = DatabaseConfig {
+    from: "inline",
+    config: Configuration {
+        server_mode: "full",
+        request_chunk_size: 1024,
+        url: "../databases/db.sqlite3",
+    },
+};
 
 const OPAL_THEME_KEY: &str = "opal_theme";
 const DARK_THEME: &str = "dark";
@@ -131,14 +143,18 @@ async fn query(search_mode: SearchMode, search: String) -> SearchResults {
         match &search_mode {
             SearchMode::Ipa => {
                 for entry in js_sys::Array::from(&res).iter() {
-                    if let Ok(QueryResult { word, phonemes }) = entry.into_serde() {
+                    if let Ok(QueryResult { word, phonemes }) =
+                        serde_wasm_bindgen::from_value(entry)
+                    {
                         result.entry(phonemes).or_insert_with(|| vec![]).push(word);
                     }
                 }
             }
             SearchMode::Normal => {
                 for entry in js_sys::Array::from(&res).iter() {
-                    if let Ok(QueryResult { word, phonemes }) = entry.into_serde() {
+                    if let Ok(QueryResult { word, phonemes }) =
+                        serde_wasm_bindgen::from_value(entry)
+                    {
                         result.entry(word).or_insert_with(|| vec![]).push(phonemes);
                     }
                 }
@@ -156,8 +172,9 @@ fn initialize_worker_if_missing() {
     if !is_worker_initialized() {
         // This is *really* dumb but I don't think JsValue can just parse from
         // a string -> object.
-        let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
-        let x = JsValue::from_serde(&v).unwrap();
+        // let v: serde_json::Value = serde_json::from_str(DB_CONFIG).unwrap();
+        // let x = wasm_bindgen::JsValue::from_serde(&v).unwrap();
+        let x = serde_wasm_bindgen::to_value(&DB_CONFIG).unwrap();
         spawn_local(async {
             create_db_worker(vec![x], "./static/code/sqlite.worker.js", "./sql-wasm.wasm").await;
         });
