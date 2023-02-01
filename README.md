@@ -14,11 +14,11 @@ See answers to some questions some people will likely have [here.](Why.md)
 
 ## Development
 
-Note that opal was developed and built with:
+Note that opal was developed and built with (as of 2023-01-31):
 
-- Rust 1.60.0 (it'll probably work fine with some older versions but this is what I tested on)
+- Rust 1.67.0 (it'll probably work fine with some older versions but this is what I tested on)
 - Yew 0.19.3
-- Tailwind 3.0.18
+- Tailwind 3.2.4
 
 Additionally, opal relies on [`trunk`](https://github.com/thedodd/trunk) (0.15.0 as of writing) for building and
 general development, where it handles building to WASM and running the Tailwind hook.
