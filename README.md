@@ -8,7 +8,6 @@
 
 https://user-images.githubusercontent.com/34804052/175511088-68dc2f3a-f793-4446-99f3-9997838ca4fc.mp4
 
-
 ## Why...
 
 See answers to some questions some people will likely have [here.](Why.md)
@@ -33,9 +32,9 @@ general development, where it handles building to WASM and running the Tailwind 
 4. Install some static HTTP server tool that supports byte ranges. I personally used [`http-server`](https://www.npmjs.com/package/http-server).
 5. Install [Tailwind CSS](https://tailwindcss.com/).
 6. Run `trunk build`. This will build to `./dist`. If you're working on opal and want automatic builds when saving,
-   use `trunk watch` instead. 
-8. In another terminal, run the HTTP server. For `http-server`, you can run `cd dist/` and `http-server ./` to do so.
-9. For release builds, run `trunk build --release`. For more details on optimizing the generated WASM code, look at
+   use `trunk watch` instead.
+7. In another terminal, run the HTTP server. For `http-server`, you can run `cd dist/` and `http-server ./` to do so.
+8. For release builds, run `trunk build --release`. For more details on optimizing the generated WASM code, look at
    [the deploy workflow](./.github/workflows/deploy.yml) and [post-compilation optimization script](./scripts/optimize.py)
    for how to optimize using minify and wasm-opt.
 
@@ -49,7 +48,7 @@ general development, where it handles building to WASM and running the Tailwind 
 
    As of writing, GitHub Pages should work fine, and Cloudflare Pages is supposed to support it in the future. I
    haven't looked into other static webpage services.
-   
+
 ## Support
 
 Currently, only English (and a specific subset at that) is supported. However, support for more sources or other
