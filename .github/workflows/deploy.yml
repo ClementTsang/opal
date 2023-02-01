@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "master"
+      - "main"
 
 env:
   # Assign commit authorship to official Github Actions bot when pushing to the `web-deploy` branch:
