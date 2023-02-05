@@ -21,7 +21,7 @@ Note that opal was developed and built with (as of 2023-01-31):
 - Tailwind 3.2.4
 
 Additionally, opal relies on [`trunk`](https://github.com/thedodd/trunk) (0.15.0 as of writing) for building and
-general development, where it handles building to WASM and running the Tailwind hook.
+general development, handling the build to WASM and running the Tailwind hook for CSS.
 
 ### Installation
 
