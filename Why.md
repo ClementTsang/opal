@@ -27,7 +27,7 @@ or pay for upkeep sounds like a perfect use case for this concept.
 A few reasons I decided on Rust for this project:
 
 - I program primarily in Rust in my free time, if you haven't seen my other repos, so I guess it's not surprising I
-  thought about using it here, even in an area its not particularly known for.
+  thought about trying to use it here, even in an area its not particularly known for.
 - I've always wanted to take a crack at trying to build a frontend with [Yew](https://yew.rs/), and at the time of
   writing, it looks like the most mature framework (though [dioxus](https://dioxuslabs.com/) looks interesting as well).
 - Exploring WASM-related stuff in general is super interesting, and while I've played with it in some capacity with things
@@ -39,10 +39,10 @@ the Rust web frontend ecosystem is passable at best.
 
 If this was a more serious project, I would have definitely gone with just using JS (or more likely, Typescript), which
 would be far easier to work with - there is/was stuff that I did during this project that would have definitely been
-easier in JS-land. However, since this project was more for exploration and fun, I'm fine with going with unconventional
-choices, and I learned a lot from doing so anyways.
+easier in JS-land, especially with a framework like Svelte/Vue/React. However, since this project was more for exploration and fun, I'm fine with going with unconventional
+choices for the heck of it, and I learned a lot from doing it like this.
 
 ## Why Tailwind?
 
-Because I can't style things for my life and Tailwind CSS seemed like an easy one to work with. For the most part, it's
-been alright in my experience, though getting it to play nicely with Yew and Trunk was a bit tricky at first.
+Because I can't style things for my life and Tailwind CSS seemed like an easy one to work with  in conjunction with Yew. For the most part, it's
+been alright in my experience, though getting it to play nicely with Yew and Trunk was a bit tricky at first. Feel free to refer to the repo if you're trying to figure that out in your own projects.
