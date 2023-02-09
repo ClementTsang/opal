@@ -6,9 +6,15 @@ Answers to some "why" questions I'm sure some people will have.
 
 Short answer: Why not?
 
-Longer answer: I was a bit bored and wanted a small project that I could work on in small chunks, I wanted to play with WASM and Yew,
-I wanted to try using Tailwind, and I just took an intro to linguistics class. This all consolidated into working on
-this overly-complicated and unnecessary project.
+Longer answer: Basically, a bunch of random reasons that all came together.
+
+- I was a bit bored at the time and wanted a small/unimportant project that was easy to slowly work on whenever I had free time.
+- I wanted to play with WASM and Yew, the latter of which I had been thinking of trying to use for a while.
+- I wanted to try using Tailwind.
+- I just took an intro to linguistics class at uni.
+
+All this consolidated into working on
+this weird, overly-complicated, and unnecessary project that I'm pretty happy with.
 
 ## Why "opal"?
 
@@ -44,5 +50,5 @@ choices for the heck of it, and I learned a lot from doing it like this.
 
 ## Why Tailwind?
 
-Because I can't style things for my life and Tailwind CSS seemed like an easy one to work with  in conjunction with Yew. For the most part, it's
+Because I can't style things for my life and Tailwind CSS seemed like an easy one to try to work with in conjunction with Yew. For the most part, it's
 been alright in my experience, though getting it to play nicely with Yew and Trunk was a bit tricky at first. Feel free to refer to the repo if you're trying to figure that out in your own projects.
