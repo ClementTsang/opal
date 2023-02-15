@@ -14,7 +14,7 @@ See answers to some questions some people will likely have [here.](Why.md)
 
 ## Development
 
-Note that opal was developed and built with (as of 2023-01-31):
+Note that (as of 2023-01-31) opal was developed and tested with:
 
 - Rust 1.67.0 (it'll probably work fine with some older versions but this is what I tested on)
 - Yew 0.19.3
