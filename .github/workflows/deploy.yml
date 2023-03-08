@@ -27,19 +27,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "npm"
 
-      - name: Install tailwindcss
-        run: |
-          npm install -g tailwindcss@3.2.4
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('scripts/npm_dependencies') }}
 
-      - name: Install binaryen
+      - name: Install npm dependencies
         run: |
-          npm install -g binaryen
-
-      - name: Install minify
-        run: |
-          npm install -g minify
+          ./scripts/npm_dependencies.sh
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
