@@ -24,7 +24,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('scripts/npm_dependencies') }}
+          key: npm-${{ hashFiles('scripts/npm_dependencies.sh') }}
 
       - name: Install tailwindcss
         run: |
