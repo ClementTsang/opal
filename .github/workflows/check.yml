@@ -20,17 +20,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-
-      # TODO: Fix key
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
+          cache: "npm"
 
       - name: Install tailwindcss
         run: |
           npm install -g tailwindcss@3.2.4
+
+      - name: Install binaryen
+        run: |
+          npm install -g binaryen
+
+      - name: Install minify
+        run: |
+          npm install -g minify
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -63,3 +65,8 @@ jobs:
       - name: Build
         run: |
           trunk build
+
+      - name: Test optimizing with binaryen and wasm-opt
+        run: |
+          python3 ./scripts/optimize.py ./dist
+
