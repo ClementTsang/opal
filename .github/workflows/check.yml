@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-building:
-    name: test-building
+    name: Test build + optimizations
     runs-on: ubuntu-latest
     env:
       RUST_BACKTRACE: 1
