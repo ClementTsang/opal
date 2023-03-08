@@ -58,6 +58,10 @@ jobs:
           cargo install trunk --version ~0.16 --locked
           cargo install wasm-bindgen-cli --version ~0.2 --locked
 
+      - name: Build
+        run: |
+          TRUNK_BUILD_PUBLIC_URL="/opal/" trunk build --release
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -68,10 +72,6 @@ jobs:
         run: |
           pip install -r ./scripts/cmudict/requirements.txt
           ./setup.sh
-
-      - name: Build
-        run: |
-          TRUNK_BUILD_PUBLIC_URL="/opal/" trunk build --release
 
       - name: Optimize with binaryen and wasm-opt
         run: |
