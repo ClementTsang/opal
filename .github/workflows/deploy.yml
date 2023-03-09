@@ -40,7 +40,7 @@ jobs:
           echo Email: $(git config --get user.email)
 
       - name: GitHub Pages action
-        uses: peaceiris/actions-gh-pages@v3.9.2
+        uses: peaceiris/actions-gh-pages@bd8c6b06eba6b3d25d72b7a1767993c0aeee42e7 # v3.9.2
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,3 +49,9 @@ jobs:
       # - name: Deploy on CFP
       #   run: |
       #     curl -X POST ${{ secrets.OPAL_WEB_HOOK }}
+
+      - name: Delete the artifact after success
+        uses: geekyeggo/delete-artifact@54ab544f12cdb7b71613a16a2b5a37a9ade990af # v2.0.0
+        with:
+          name: dist
+          failOnError: false
