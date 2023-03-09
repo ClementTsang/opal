@@ -28,24 +28,14 @@ jobs:
         with:
           node-version: "16"
 
-      # TODO: Fix key
       - uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
+          key: npm-${{ hashFiles('scripts/npm_dependencies.sh') }}
 
-      - name: Install tailwindcss
+      - name: Install npm dependencies
         run: |
-          npm install -g tailwindcss@3.2.4
-
-      - name: Install binaryen
-        run: |
-          npm install -g binaryen
-
-      - name: Install minify
-        run: |
-          npm install -g minify
+          ./scripts/npm_dependencies.sh
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -65,13 +55,15 @@ jobs:
 
       - name: Install trunk and wasm-bindgen-cli
         run: |
-          cargo install trunk --version ~0.15 --locked
+          cargo install trunk --version ~0.16 --locked
           cargo install wasm-bindgen-cli --version ~0.2 --locked
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "**/requirements.txt"
 
       - name: Setup DBs
         run: |

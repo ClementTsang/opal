@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-building:
-    name: test-building
+    name: Test build + optimizations
     runs-on: ubuntu-latest
     env:
       RUST_BACKTRACE: 1
@@ -21,16 +21,18 @@ jobs:
         with:
           node-version: "16"
 
-      # TODO: Fix key
       - uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
+          key: npm-${{ hashFiles('scripts/npm_dependencies.sh') }}
 
       - name: Install tailwindcss
         run: |
           npm install -g tailwindcss@3.2.4
+
+      - name: Install npm dependencies
+        run: |
+          ./scripts/npm_dependencies.sh
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -53,7 +55,9 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "**/requirements.txt"
 
       - name: Setup DBs
         run: |
@@ -62,4 +66,8 @@ jobs:
 
       - name: Build
         run: |
-          trunk build
+          TRUNK_BUILD_PUBLIC_URL="/opal/" trunk build --release
+
+      - name: Test optimizing with binaryen and wasm-opt
+        run: |
+          python3 ./scripts/optimize.py ./dist
