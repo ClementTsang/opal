@@ -3,6 +3,12 @@ name: build
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      artifact:
+        description: "Whether to save an artifact."
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   build:
@@ -34,7 +40,8 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
 
@@ -62,3 +69,11 @@ jobs:
       - name: Optimize with binaryen and wasm-opt
         run: |
           python3 ./scripts/optimize.py ./dist
+
+      - name: Save artifact
+        if: ${{ inputs.artifact }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: ./dist
+          retention-days: 1
