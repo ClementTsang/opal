@@ -1,12 +1,17 @@
-name: check
+name: build
 
 on:
   workflow_dispatch:
-  pull_request:
+  workflow_call:
+    inputs:
+      artifact:
+        description: "Whether to save an artifact."
+        default: false
+        required: false
+        type: boolean
 
 jobs:
-  test-building:
-    name: Test build + optimizations
+  build:
     runs-on: ubuntu-latest
     env:
       RUST_BACKTRACE: 1
@@ -26,10 +31,6 @@ jobs:
           path: ~/.npm
           key: npm-${{ hashFiles('scripts/npm_dependencies.sh') }}
 
-      - name: Install tailwindcss
-        run: |
-          npm install -g tailwindcss@3.2.4
-
       - name: Install npm dependencies
         run: |
           ./scripts/npm_dependencies.sh
@@ -39,17 +40,14 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
 
-      - name: Run tests
-        run: |
-          cargo test
-
       - name: Install trunk and wasm-bindgen-cli
         run: |
-          cargo install trunk --version ~0.15 --locked
+          cargo install trunk --version ~0.16 --locked
           cargo install wasm-bindgen-cli --version ~0.2 --locked
 
       - name: Setup Python
@@ -68,6 +66,14 @@ jobs:
         run: |
           TRUNK_BUILD_PUBLIC_URL="/opal/" trunk build --release
 
-      - name: Test optimizing with binaryen and wasm-opt
+      - name: Optimize with binaryen and wasm-opt
         run: |
           python3 ./scripts/optimize.py ./dist
+
+      - name: Save artifact
+        if: ${{ inputs.artifact }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: ./dist
+          retention-days: 1

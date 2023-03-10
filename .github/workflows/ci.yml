@@ -1,0 +1,37 @@
+# The CI workflow really just checks if the build works and if tests pass.
+name: ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+  workflow_call:
+
+jobs:
+  run-tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    env:
+      RUST_BACKTRACE: 1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
+      - name: Run cargo test
+        run: |
+          cargo test
+
+  test-build:
+    name: Test building
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
