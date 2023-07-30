@@ -2,7 +2,7 @@
   <h1>opal</h1>
   
   <p>
-    opal (Oxidized Phonetics Alphabet Lookup) is a simple static webapp to look up the IPA phonetics of English words or vice versa.
+    opal (Oxidized Phonetics Alphabet Lookup) is a static WASM-based webapp to look up the IPA phonetics of English words or vice versa.
   </p>
 </div>
 
