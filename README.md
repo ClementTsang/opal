@@ -56,7 +56,7 @@ languages isn't too difficult to add, and may be added in the future. PRs are ce
 
 ## Credits
 
-opal would not be possible without the following:
+opal builds on a lot of existing work, which I have to thank:
 
 - The English (US) IPA mappings were created using [CMUdict](https://github.com/cmusphinx/cmudict) as a base
   (see [original license](https://github.com/cmusphinx/cmudict/blob/master/LICENSE)), converted from ARPABET to IPA following the
