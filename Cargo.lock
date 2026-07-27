@@ -405,9 +405,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 
 [[package]]
 name = "sql-js-httpvfs-rs"
-version = "0.0.2"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1560d38bffe4641145d004a3d9d903ea61513d41e14a91618545f2bf778aacbf"
+checksum = "f54128356d66c875e81559f9e71271a974992b5cbc05cefbf9e8abead3795f4a"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
