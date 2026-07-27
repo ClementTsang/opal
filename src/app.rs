@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use concat_string::concat_string;
 use indexmap::IndexSet;
 use js_sys::Function;
+use rand::distr::{Distribution, weighted::WeightedIndex};
 use serde::{Deserialize, Serialize};
 use sql_js_httpvfs_rs::*;
 use wasm_bindgen_futures::spawn_local;
@@ -61,6 +62,46 @@ pub enum ThemeMode {
     System,
 }
 
+#[derive(Deserialize, Debug, Clone, PartialEq)]
+pub struct QueryResult {
+    pub word: String,
+    pub phonemes: String,
+}
+
+pub type SearchResults = (Vec<String>, HashMap<String, Vec<String>>, SearchMode);
+
+struct PlaceholderPair {
+    normal: &'static str,
+    ipa: &'static str,
+}
+
+impl PlaceholderPair {
+    #[inline]
+    fn random() -> Self {
+        const COMBINATIONS: [(&str, &str); 5] = [
+            ("opal", "oʊpʌl"),
+            ("hello world!", "hʌloʊ wɝld!"),
+            ("made with love from canada", "meɪd wɪð lʌv frʌm kænʌdʌ"),
+            ("type something here", "taɪp sʌmθɪŋ hir"),
+            ("have a nice day", "hæv eɪ naɪs deɪ"),
+        ];
+
+        let mut rng = rand::rng();
+        let mut weights = [1; COMBINATIONS.len()];
+
+        // Give the base combination a larger weight to be in favour of it.
+        weights[0] = COMBINATIONS.len();
+
+        let distribution = WeightedIndex::new(&weights).expect("valid weights");
+        let choice = COMBINATIONS[distribution.sample(&mut rng)];
+
+        PlaceholderPair {
+            normal: choice.0,
+            ipa: choice.1,
+        }
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum SearchMode {
     Ipa,
@@ -73,22 +114,7 @@ impl Default for SearchMode {
     }
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq)]
-pub struct QueryResult {
-    pub word: String,
-    pub phonemes: String,
-}
-
-pub type SearchResults = (Vec<String>, HashMap<String, Vec<String>>, SearchMode);
-
 impl SearchMode {
-    fn placeholder_text(&self) -> &'static str {
-        match self {
-            SearchMode::Ipa => "oʊpʌl",
-            SearchMode::Normal => "opal",
-        }
-    }
-
     fn button_text(&self) -> &'static str {
         match self {
             SearchMode::Ipa => "/ə/",
@@ -99,11 +125,27 @@ impl SearchMode {
 
 pub struct App {
     search_mode: SearchMode,
+    placeholder_pair: PlaceholderPair,
     first_load: bool,
     is_busy: bool,
     displayed_results: SearchResults,
     current_theme_mode: ThemeMode,
     mql: Option<MediaQueryList>,
+}
+
+impl App {
+    #[inline]
+    fn placeholder_text(&self) -> &'static str {
+        match self.search_mode {
+            SearchMode::Ipa => self.placeholder_pair.ipa,
+            SearchMode::Normal => self.placeholder_pair.normal,
+        }
+    }
+
+    #[inline]
+    fn is_ipa(&self) -> bool {
+        matches!(self.search_mode, SearchMode::Ipa)
+    }
 }
 
 // From https://github.com/yewstack/yew/issues/364#issuecomment-737138847
@@ -208,6 +250,7 @@ impl Component for App {
         initialize_worker_if_missing();
         Self {
             search_mode: SearchMode::Normal,
+            placeholder_pair: PlaceholderPair::random(),
             first_load: true,
             is_busy: false,
             displayed_results: SearchResults::default(),
@@ -384,7 +427,7 @@ impl Component for App {
         let link = ctx.link();
         let on_search = link.callback(|s: String| Msg::SearchStart(s));
         let on_toggle = link.callback(|_| Msg::ToggleSearchMode);
-        let placeholder: &'static str = self.search_mode.placeholder_text();
+        let placeholder: &'static str = self.placeholder_text();
         let open_theme_window = link.callback(|_| Msg::CycleThemeMode);
 
         let open_modal = Callback::from(|_| {
@@ -418,7 +461,11 @@ impl Component for App {
                     </button>
                 </div>
                 <InfoModal />
-                <p class={title_classes}>{"opal"}</p>
+                if self.is_ipa() {
+                    <p class={title_classes}>{"oʊpʌl"}</p>
+                } else {
+                    <p class={title_classes}>{"opal"}</p>
+                }
                 <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.search_mode.button_text()} first_load={self.first_load} is_busy={self.is_busy}/>
                 if self.is_busy {
                     <SpinnerIcon />
