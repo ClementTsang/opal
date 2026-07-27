@@ -20,10 +20,10 @@
 }
 
 @font-face {
-  font-family: "OpenSansLight";
-  src: url("./static/fonts/open_sans/subset-OpenSans-Light.woff2")
+  font-family: "NotoSansLight";
+  src: url("./static/fonts/noto_sans/subset-NotoSans-Light.woff2")
       format("woff2"),
-    url("./static/fonts/open_sans/subset-OpenSans-Light.woff") format("woff");
+    url("./static/fonts/noto_sans/subset-NotoSans-Light.woff") format("woff");
   font-weight: 300;
   font-style: normal;
   font-display: fallback;
