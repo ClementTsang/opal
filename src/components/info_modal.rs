@@ -1,7 +1,7 @@
 use crate::components::*;
 
 use web_sys::MouseEvent;
-use yew::{classes, function_component, html, Callback};
+use yew::{Callback, classes, function_component, html};
 
 #[function_component(InfoModal)]
 pub fn displayed_results() -> Html {

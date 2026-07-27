@@ -1,5 +1,5 @@
 use concat_string::concat_string;
-use yew::{classes, function_component, html, Html, Properties};
+use yew::{Html, Properties, classes, function_component, html};
 
 use crate::app::{SearchMode, SearchResults};
 

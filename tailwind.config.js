@@ -10,7 +10,7 @@ module.exports = {
     extend: {
       fontFamily: {
         title: [
-          "OpenSansLight",
+          "NotoSansLight",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",

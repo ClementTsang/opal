@@ -1,6 +1,6 @@
 use crate::components::*;
 use web_sys::{HtmlInputElement, KeyboardEvent};
-use yew::{classes, function_component, functional::*, html, Callback, NodeRef, Properties};
+use yew::{Callback, NodeRef, Properties, classes, function_component, functional::*, html};
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct SearchBarProps {
