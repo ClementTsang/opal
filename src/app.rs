@@ -21,7 +21,7 @@ struct Configuration {
     server_mode: &'static str,
     request_chunk_size: u64,
     url: &'static str,
-    file_size: u64,
+    file_length: u64,
 }
 
 #[derive(Serialize)]
@@ -37,7 +37,7 @@ const DB_CONFIG: DatabaseConfig = DatabaseConfig {
         server_mode: "full",
         request_chunk_size: 1024,
         url: "../databases/db.sqlite3",
-        file_size: 8286208,
+        file_length: 8286208,
     },
 };
 
