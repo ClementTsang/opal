@@ -139,6 +139,10 @@ impl App {
             SearchMode::Normal => self.placeholder_pair.normal,
         }
     }
+
+    fn is_ipa(&self) -> bool {
+        matches!(self.search_mode, SearchMode::Ipa)
+    }
 }
 
 // From https://github.com/yewstack/yew/issues/364#issuecomment-737138847
@@ -454,7 +458,11 @@ impl Component for App {
                     </button>
                 </div>
                 <InfoModal />
-                <p class={title_classes}>{"opal"}</p>
+                if self.is_ipa() {
+                    <p class={title_classes}>{"oʊpʌl"}</p>
+                } else {
+                    <p class={title_classes}>{"opal"}</p>
+                }
                 <SearchBar {text_ref} {on_search} {placeholder} {on_toggle} toggle_text={self.search_mode.button_text()} first_load={self.first_load} is_busy={self.is_busy}/>
                 if self.is_busy {
                     <SpinnerIcon />
