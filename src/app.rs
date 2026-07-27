@@ -76,8 +76,9 @@ struct PlaceholderPair {
 }
 
 impl PlaceholderPair {
+    #[inline]
     fn random() -> Self {
-        const COMBINATIONS: [(&'static str, &'static str); 5] = [
+        const COMBINATIONS: [(&str, &str); 5] = [
             ("opal", "oʊpʌl"),
             ("hello world!", "hʌloʊ wɝld!"),
             ("made with love from canada", "meɪd wɪð lʌv frʌm kænʌdʌ"),
@@ -88,10 +89,10 @@ impl PlaceholderPair {
         let mut rng = rand::rng();
         let mut weights = [1; COMBINATIONS.len()];
 
-        // Basically give the base combination a huge weight in favour of it.
+        // Give the base combination a larger weight to be in favour of it.
         weights[0] = COMBINATIONS.len();
 
-        let distribution = WeightedIndex::new(&weights).unwrap();
+        let distribution = WeightedIndex::new(&weights).expect("valid weights");
         let choice = COMBINATIONS[distribution.sample(&mut rng)];
 
         PlaceholderPair {
@@ -133,6 +134,7 @@ pub struct App {
 }
 
 impl App {
+    #[inline]
     fn placeholder_text(&self) -> &'static str {
         match self.search_mode {
             SearchMode::Ipa => self.placeholder_pair.ipa,
@@ -140,6 +142,7 @@ impl App {
         }
     }
 
+    #[inline]
     fn is_ipa(&self) -> bool {
         matches!(self.search_mode, SearchMode::Ipa)
     }
