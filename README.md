@@ -67,4 +67,4 @@ opal builds on a lot of existing work, which I have to thank:
   using their [sql.js-httpvfs](https://github.com/phiresky/sql.js-httpvfs), which I wrote [simple bindings for](https://github.com/ClementTsang/sql.js-httpvfs-rs).
 - Written using [Yew](https://yew.rs/).
 - Styling from [Tailwind CSS](https://tailwindcss.com/).
-- Fonts used are from [Open Sans](https://github.com/googlefonts/opensans) and [Source Code Pro](https://github.com/adobe-fonts/source-code-pro).
+- Fonts used are from [Open Sans](https://github.com/googlefonts/opensans), [Noto Sans](https://fonts.google.com/noto/specimen/Noto+Sans), and [Source Code Pro](https://github.com/adobe-fonts/source-code-pro).
