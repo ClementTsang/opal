@@ -22,7 +22,7 @@ Note that (as of 2023-01-31) opal was developed and tested with:
 - Yew 0.19.3
 - Tailwind 3.2.4
 
-Additionally, opal relies on [`trunk`](https://github.com/thedodd/trunk) (0.15.0 as of writing) for building and
+Additionally, opal relies on [`trunk`](https://github.com/thedodd/trunk) (0.21.4 as of writing) for building and
 general development, handling the build to WASM and running the Tailwind hook for CSS.
 
 ### Installation
