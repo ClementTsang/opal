@@ -1,5 +1,8 @@
 [build]
-public_url = "/"
+# Relative so a single build works whether served from the domain root
+# (e.g. opal.cjhtsang.ca/) or a subpath (e.g. github.io/opal/). opal has no
+# client-side routing, so relative asset paths always resolve correctly.
+public_url = "./"
 
 [watch]
 watch = [

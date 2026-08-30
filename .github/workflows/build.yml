@@ -51,7 +51,7 @@ jobs:
 
       - name: Install trunk and wasm-bindgen-cli
         run: |
-          cargo install trunk --version ~0.16 --locked
+          cargo install trunk --version ~0.21 --locked
           cargo install wasm-bindgen-cli --version ~0.2 --locked
 
       - name: Setup Python
@@ -68,7 +68,7 @@ jobs:
 
       - name: Build
         run: |
-          TRUNK_BUILD_PUBLIC_URL="/opal/" trunk build --release
+          trunk build --release
 
       - name: Optimize with binaryen and wasm-opt
         run: |
