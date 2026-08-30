@@ -68,6 +68,7 @@ jobs:
 
       - name: Build
         run: |
+          # If you go back to normal github pages, then add TRUNK_BUILD_PUBLIC_URL="/opal/"
           trunk build --release
 
       - name: Optimize with binaryen and wasm-opt

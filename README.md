@@ -6,11 +6,11 @@
   </p>
 </div>
 
-https://user-images.githubusercontent.com/34804052/175511088-68dc2f3a-f793-4446-99f3-9997838ca4fc.mp4
+<https://user-images.githubusercontent.com/34804052/175511088-68dc2f3a-f793-4446-99f3-9997838ca4fc.mp4>
 
 You can find a version hosted via GitHub Pages at [opal.cjhtsang.ca](https://opal.cjhtsang.ca).
 
-## Why...
+## Why
 
 See answers to some questions some people will likely have [here.](Why.md)
 
