@@ -1,5 +1,9 @@
 [build]
 public_url = "/"
+# The post-build optimize.py step (wasm-opt / minify) rewrites the .wasm and .js
+# after Trunk computes their SRI hashes, which would make the integrity checks
+# fail and the app not load. Disable SRI since these are same-origin assets.
+no_sri = true
 
 [watch]
 watch = [
