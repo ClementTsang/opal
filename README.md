@@ -10,7 +10,7 @@
 
 You can find a version hosted via GitHub Pages at [opal.cjhtsang.ca](https://opal.cjhtsang.ca).
 
-## Why
+## But why?
 
 See answers to some questions some people will likely have [here.](Why.md)
 
