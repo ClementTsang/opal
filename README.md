@@ -49,12 +49,12 @@ general development, handling the build to WASM and running the Tailwind hook fo
    along those lines. Basically, weird things may happen if it isn't supported!
 
    As of writing, GitHub Pages should work fine, and Cloudflare Pages is supposed to support it in the future. I
-   haven't looked into other static webpage services.
+   haven't looked into other static webpage services, feel free to let me know if you find one that works.
 
 ## Support
 
 Currently, only English (and a specific subset at that) is supported. However, support for more sources or other
-languages isn't too difficult to add, and may be added in the future. PRs are certainly welcome.
+languages isn't too difficult to add, and may be added in the future. PRs are certainly welcome too!
 
 ## Credits
 
